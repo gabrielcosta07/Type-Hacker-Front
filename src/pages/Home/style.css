@@ -10,6 +10,7 @@
     align-items: center;
     height: 100vh;
     background-image: url('../../assets/background.jpg');
+
 }
 
 .home{
@@ -19,7 +20,10 @@
     align-items: center;
     text-align: center;
     gap: 40px;
-    
+    backdrop-filter: blur(2px);
+    background: rgba(30, 30, 60, 0.4);
+    border-radius: 10px;
+    padding: 37px 50px; 
 }
 
 
@@ -29,7 +33,6 @@
     padding: 10px;
     border-radius: 4px;
     width: 40vh;
-    background-color: #353175;
     color: #fff;
 }
 
@@ -39,22 +42,23 @@
     justify-content: center;
     align-items: center;
     gap: 40px;
+
 }
 .btn{
     display: block;
     padding: 16px;
     border-radius: 4px;
-    width: 40vh;
+    width: 45vh;
     gap: 10px;
-    background-color: #353175;
-    color: #fff;
+    background-color: #295b16;
     font-size: 1.1rem;
     border: none;
     font-family: sans-serif;
+    color: #fff; 
 }
 
 .btn:hover{
-    background-color: #56519c;
+    background-color: #2ab040;
     color: #fff;
     cursor: pointer;
 }
