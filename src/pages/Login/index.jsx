@@ -1,4 +1,4 @@
-import "./login.css";
+import "./style.css";
 import {FaUser,FaLock}  from "react-icons/fa";
 
 function Login() {

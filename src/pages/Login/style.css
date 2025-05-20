@@ -5,13 +5,7 @@
     font-family: Poppins, sans-serif;
 }
 
-body{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
 
-}
 
 .container-login{
     border: 2px solid white;
@@ -19,6 +13,11 @@ body{
     height: 70vh;
     border-radius: 15px;
     background-color: rgb(11, 54, 36);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: auto;
 }
 
 .form-login{
