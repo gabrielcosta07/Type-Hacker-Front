@@ -52,9 +52,9 @@
 }
 
 .login h2{
-    font-size: 2rem;
+    font-size: 2.5rem;
     text-align: center;
-    margin-bottom: 12px;
+    margin-bottom: 15px;
     color: rgb(255, 255, 255);
 }
 
@@ -83,7 +83,9 @@
     border-radius: 10rem;
     border: none;
     cursor: pointer;
-    
+    font-size: 0.9rem;
+    font-family: Poppins, sans-serif;
+    font-weight: 600;
 }
 
 .btn-login:hover{
@@ -118,6 +120,7 @@
 }
 
 
+/* Responsividade*/
 @media (max-width: 1024px) {
   .container-login {
     background-image: url('../../assets/background_login_response.png');
