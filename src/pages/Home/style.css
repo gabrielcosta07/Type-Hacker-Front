@@ -10,9 +10,10 @@
     align-items: center;
     height: 100vh;
     background-image: url('../../assets/background_azul.jpg');
-    background-repeat:none;
+    background-repeat:no-repeat;
     background-size: cover;
     background-position: center;
+    width: 100vw;
 }
 
 
@@ -26,6 +27,7 @@
     backdrop-filter: blur(3px);
     background: rgba(30, 30, 60, 0.37);
     border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 119, 255, 0.13);
     padding: 50px; 
 }
 
