@@ -45,10 +45,10 @@
     box-shadow: 0 0 15px rgba(0,255,255,0.2);
     border-radius: 16px;
     width: 100%;
-    max-width: 34rem;
     padding: 6rem 4rem;
     margin-right: 5%; 
-
+    max-width: 40%;
+  
 }
 
 .login h2{
@@ -62,7 +62,9 @@
    padding: 1.2rem;
    border: 1px solid white;
    border-radius: 10px;
-   width: 35vh;
+   width: 20rem;
+   height: 4.5rem;
+   max-width: 150%;
    
 }
 
