@@ -1,4 +1,4 @@
-import "./style.css";
+import "./jogo.css";
 import Fundo from "../../assets/Fundo.png";
 import Campo_Digitar from "../../assets/Campo_Digitar.png";
 

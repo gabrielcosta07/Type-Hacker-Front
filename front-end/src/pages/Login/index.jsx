@@ -1,4 +1,4 @@
-import "./style.css";
+import "./login.css";
 import {FaUser,FaLock}  from "react-icons/fa";
 import React, { useState } from 'react';
 
