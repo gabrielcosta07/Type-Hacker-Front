@@ -12,3 +12,25 @@
     padding: 9rem;
     
 }
+
+.form-registrar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 1rem;
+}
+
+#name-registrar{
+  font-size: 2.5rem;
+}
+
+.form-registrar input{
+  padding: 1rem;
+  border: 1px solid #00BFFF;
+  border-radius: 10px;
+  width: 20rem;
+  height: 3rem;
+  max-width: 100%;
+}

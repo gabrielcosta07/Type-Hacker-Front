@@ -4,7 +4,7 @@ function Registrar() {
   return (
     <div className="container-registrar">
       <div className="registrar">
-        <form>
+        <form className="form-registrar">
           <h2 typeof = "title" id="name-registrar">Sing-up</h2>
           <div className="input-container-registrar">
             <input type="text" placeholder="Nome" />
