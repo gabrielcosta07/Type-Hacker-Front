@@ -15,6 +15,7 @@
 <body>
 
     <h1 id="palavraAnimada"
+        data-velocidade="2"
         style="font-size: <?php echo $tamanho_inicial_fonte; ?>px;">
     </h1>
 
@@ -22,6 +23,9 @@
         <input type="text" id="campoControle" placeholder="Quebre o Codigo!" autofocus>
     </div>
 
+    <script>
+        const listaDePalavras = <?php echo json_encode($lista_de_palavras_php); ?>;
+    </script>
     <script src="Corpo Javascript.js" defer></script>
 
 </body>
