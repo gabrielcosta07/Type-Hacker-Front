@@ -5,10 +5,30 @@ function Registrar() {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const [confirmarSenha, setConfirmarSenha] = useState("");
+
+  const isValidEmail = (emailToValidate) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(emailToValidate);
+  };
+  
   //Não deixa a página recarregar
   const enviarFormulario = (e) => {
     e.preventDefault();
+    setError("");
+    if (!email || !senha) {
+      setError("Por favor, preencha todos os campos.");
+      setLoading(false);
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      setError("Por favor, insira um email válido.");
+      setLoading(false);
+      return;
+    }
 
     fetch("http://localhost/Trabalho-Web1-Jogo-Back/auth/registrar_login.php", {
       method: "POST",
@@ -23,15 +43,21 @@ function Registrar() {
     })
       .then((res) => res.json())
       .then((data) => {
-        alert(data.mensagem || data.erro);
-        if (!data.erro) {
+      if (data.erro) {
+        setError(data.erro);
+      } else {
+        alert(data.mensagem);
         setNome("");
         setEmail("");
         setSenha("");
         setConfirmarSenha("");
-        }
+      }
+      setLoading(false);
     })
-      .catch((err) => console.error(err));
+      .catch(() => {
+        setError("Erro ao registrar. Tente novamente.");
+        setLoading(false);
+      });
   };
   return (
     <div className="container-registrar">
@@ -40,13 +66,14 @@ function Registrar() {
           <h2 typeof="title" id="name-registrar">
             Sing-up
           </h2>
-
+          {error && <p className="error-message">{error}</p>}
           <div className="input-container-registrar">
             <input
               type="text"
               placeholder="Nome"
               value={nome}
               onChange={(e) => setNome(e.target.value)}
+              disabled={loading}
             />
           </div>
           <div className="input-container-registrar">
@@ -55,6 +82,7 @@ function Registrar() {
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              disabled={loading}
             />
           </div>
 
@@ -64,6 +92,7 @@ function Registrar() {
               placeholder="Senha"
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
+              disabled={loading}
             />
           </div>
           <div className="input-container-registrar">
@@ -72,10 +101,11 @@ function Registrar() {
               placeholder="Confirme sua Senha"
               value={confirmarSenha}
               onChange={(e) => setConfirmarSenha(e.target.value)}
+              disabled={loading}
             />
           </div>
 
-          <button type="submit">Registrar</button>
+          <button type="submit" disabled={loading}>Registrar</button>
         </form>
       </div>
     </div>
