@@ -5,7 +5,7 @@ function Registrar() {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
-
+  const [confirmarSenha, setConfirmarSenha] = useState("");
   //Não deixa a página recarregar
   const enviarFormulario = (e) => {
     e.preventDefault();
@@ -18,10 +18,19 @@ function Registrar() {
         nome: nome,
         email: email,
         senha: senha,
+        confirmarSenha: confirmarSenha,
       }),
     })
       .then((res) => res.json())
-      .then((data) => alert(data.mensagem || data.erro))
+      .then((data) => {
+        alert(data.mensagem || data.erro);
+        if (!data.erro) {
+        setNome("");
+        setEmail("");
+        setSenha("");
+        setConfirmarSenha("");
+        }
+    })
       .catch((err) => console.error(err));
   };
   return (
@@ -55,6 +64,14 @@ function Registrar() {
               placeholder="Senha"
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
+            />
+          </div>
+          <div className="input-container-registrar">
+            <input
+              type="password"
+              placeholder="Confirme sua Senha"
+              value={confirmarSenha}
+              onChange={(e) => setConfirmarSenha(e.target.value)}
             />
           </div>
 

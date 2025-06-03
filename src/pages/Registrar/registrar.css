@@ -4,13 +4,23 @@
   align-items: center;
   justify-content: center;
   height: 100vh;  
+  background-image: url(../../assets/background_registro.png);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: right center;
+  color: white;
+  font-family: Poppins, sans-serif;
 }
 
 .registrar{
-    border: 2px solid #00BFFF;
     border-radius: 16px;
-    padding: 9rem;
-    
+    padding: 8rem;
+    box-shadow: 0 0 15px rgb(41, 181, 206);
+    background: transparent;
+    backdrop-filter: blur(4px);
+    margin-right: 20rem;
+    background: rgba(0, 0, 0, 0.322);
+    height: 44.5rem;
 }
 
 .form-registrar {
@@ -19,7 +29,7 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  gap: 1rem;
+  gap: 1.7rem;
 }
 
 #name-registrar{
@@ -27,10 +37,29 @@
 }
 
 .form-registrar input{
-  padding: 1rem;
-  border: 1px solid #00BFFF;
+  padding: 1.5rem;
   border-radius: 10px;
-  width: 20rem;
-  height: 3rem;
+  width: 20.5rem;
+  height: 3.5rem;
   max-width: 100%;
+  background: transparent;
+  text-decoration-color: white;
+  color: white;
+  text-decoration: none;
+  border: 1px solid white;
+  outline: none;
+  font-size: 1rem;
+}
+
+.form-registrar button{
+  margin: 24px auto 0 auto;
+  display: block;
+  padding: 0.7rem;
+  width: 50%;
+  border-radius: 10rem;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-family: Poppins, sans-serif;
+  font-weight: 600;
 }
