@@ -1,0 +1,21 @@
+.palavra-atual {
+    position: fixed;
+    left: 3%;
+    top: 0px;
+    font-size: 20px;
+}
+.input{
+    position: fixed;
+    left: 10%;
+    transform: translateX(-10%);
+    width: 70vw;
+    bottom: 20px;
+    height: 30px;
+    font-size: 20px;
+}
+.sub-container {
+    position: relative;
+    width: 80%;
+    height: 100%; 
+    margin: 0 auto;
+}
