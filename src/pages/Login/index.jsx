@@ -2,13 +2,14 @@ import "./login.css";
 import { FaUser, FaLock } from "react-icons/fa";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
+  const navigate = useNavigate();
   /*validando email*/
   const isValidEmail = (emailToValidate) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -65,6 +66,7 @@ function Login() {
 
       if (data.success) {
         console.log("Login realizado!", data.message);
+        navigate("/");
       } else {
         setError(data.message || "Email ou senha inválidos.");
       }

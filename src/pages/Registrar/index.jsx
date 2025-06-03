@@ -1,6 +1,6 @@
 import { useState } from "react"; //Serve para armazenar os valores
 import "./registrar.css";
-
+import { useNavigate } from "react-router-dom";
 function Registrar() {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
@@ -8,7 +8,7 @@ function Registrar() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [confirmarSenha, setConfirmarSenha] = useState("");
-
+  const navigate = useNavigate();
   const isValidEmail = (emailToValidate) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(emailToValidate);
@@ -51,6 +51,7 @@ function Registrar() {
         setEmail("");
         setSenha("");
         setConfirmarSenha("");
+        navigate("/Login");
       }
       setLoading(false);
     })
