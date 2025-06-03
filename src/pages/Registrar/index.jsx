@@ -65,7 +65,7 @@ function Registrar() {
       <div className="registrar">
         <form className="form-registrar" onSubmit={enviarFormulario}>
           <h2 typeof="title" id="name-registrar">
-            Sing-up
+            Registrar
           </h2>
           {error && <p className="error-message">{error}</p>}
           <div className="input-container-registrar">
