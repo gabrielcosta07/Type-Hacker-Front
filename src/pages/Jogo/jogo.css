@@ -1,10 +1,10 @@
 /* style.css */
 .backgroundJogo {
-  position: fixed; /* fixa a imagem na tela toda */
+  position: fixed; 
   top: 0;
   left: 0;
-  width: 100vw; /* largura 100% da viewport */
-  height: 100vh; /* altura 100% da viewport */
-  object-fit: cover; /* cobre toda área sem distorcer */
-  z-index: -1; /* fica atrás de tudo */
+  width: 100vw;
+  height: 100vh; 
+  object-fit: cover; 
+  z-index: -1; 
 }
