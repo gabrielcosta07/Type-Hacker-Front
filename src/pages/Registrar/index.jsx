@@ -36,44 +36,43 @@ function Registrar() {
       return;
     }
 
-    fetch("http://localhost/Teste_bd_jogo/auth/registrar.php", {
-  method: "POST",
-  headers: { "Content-type": "application/json" },
-  body: JSON.stringify({
-    acao: "registrar",
-    nome: nome,
-    email: email,
-    senha: senha,
-  }),
-})
-.then(async (res) => {
-  const text = await res.text();
-  console.log("Resposta bruta do PHP:", text);
-  try {
-    return JSON.parse(text);
-  } catch (error) {
-    throw new Error("Resposta não é JSON válido");
-  }
-})
-.then((data) => {  // data já é o JSON parseado aqui
-  if (data.erro) {
-    setError(data.message);
-  } else {
-    alert(data.message);
-    setNome("");
-    setEmail("");
-    setSenha("");
-    setConfirmarSenha("");
-    navigate("/Login");
-  }
-  setLoading(false);
-})
-.catch((err) => {
-  console.error("Erro no fetch:", err);
-  setError("Erro ao registrar. Tente novamente.");
-  setLoading(false);
-});
-
+    fetch("http://localhost/Trabalho-Web1-Jogo-Back/auth/registrar.php", {
+      method: "POST",
+      headers: { "Content-type": "application/json" },
+      body: JSON.stringify({
+        acao: "registrar",
+        nome: nome,
+        email: email,
+        senha: senha,
+      }),
+    })
+      .then(async (res) => {
+        const text = await res.text();
+        console.log("Resposta bruta do PHP:", text);
+        try {
+          return JSON.parse(text);
+        } catch (error) {
+          throw new Error("Resposta não é JSON válido");
+        }
+      })
+      .then((data) => {
+        if (!data.success) {
+          setError(data.message);
+        } else {
+          alert(data.message);
+          setNome("");
+          setEmail("");
+          setSenha("");
+          setConfirmarSenha("");
+          navigate("/Login");
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Erro no fetch:", err);
+        setError("Erro ao registrar. Tente novamente.");
+        setLoading(false);
+      });
   };
   return (
     <div className="container-registrar">
