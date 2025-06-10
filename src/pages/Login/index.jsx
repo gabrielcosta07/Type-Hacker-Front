@@ -35,14 +35,14 @@ function Login() {
 
     try {
       const response = await fetch(
-        "http://localhost/Trabalho-Web1-Jogo-Back/auth/registrar_login.php",
+        "http://localhost/Trabalho-Web1-Jogo-Back/auth/login.php",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
+          credentials: 'include',
           body: JSON.stringify({
-            acao: "login",
             email: email,
             senha: senha,
           }),
@@ -61,9 +61,7 @@ function Login() {
       }
 
       console.log("Login bem-sucedido:", data);
-      // Exemplo de redirecionamento (se você tiver o useNavigate hook):
-      // navigate('/dashboard');
-
+      
       if (data.success) {
         console.log("Login realizado!", data.message);
         navigate("/");
