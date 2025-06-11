@@ -3,6 +3,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Registrar from "./pages/Registrar";
 import Jogo from "./pages/Jogo";
+import Liga from "./pages/Liga";
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
       <Route path="/Login" element={<Login />} />
       <Route path="/Registrar" element={<Registrar />} />
       <Route path="/Jogo" element={<Jogo />} />
+      <Route path="/Liga" element={<Liga />} />
     </Routes>
   );
 }

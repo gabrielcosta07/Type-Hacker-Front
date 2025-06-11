@@ -64,6 +64,7 @@ function Login() {
       
       if (data.success) {
         console.log("Login realizado!", data.message);
+        localStorage.setItem("usuario", JSON.stringify(data.user));
         navigate("/");
       } else {
         setError(data.message || "Email ou senha inválidos.");
