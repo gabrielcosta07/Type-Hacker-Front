@@ -14,6 +14,7 @@ body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  position: relative; /* Adicionado para posicionamento absoluto do filho */
 }
 
 .Esquerda {
@@ -36,11 +37,12 @@ body {
 
 .palavra-atual {
   font-size: 40px;
-   font-family: 'Jersey 15', sans-serif;
+  font-family: 'Jersey 15', sans-serif;
   color: rgb(255, 255, 255);
   position: absolute;
   top: 10%;
   left: 3%;
+  text-shadow: 2px 2px 4px #000;
 }
 
 .container-input {
@@ -50,7 +52,7 @@ body {
   left: 5%;
   transform: translateX(-5%);
   width: 1000px;
-  height: 100px; 
+  height: 100px;
 }
 
 .input {
@@ -66,35 +68,34 @@ body {
   font-family: 'Jersey 15', sans-serif;
   padding: 15px 30px;
   box-sizing: border-box;
+  text-align: left;
+  padding-left: 100px;
+  line-height: 70px;
 }
 .input::placeholder {
   color: white;
   font-size: 40px;
   font-family: 'Jersey 15', sans-serif;
-  opacity: 1; 
+  opacity: 1;
 }
-.Direita {
-  flex: 0.3;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  padding: 20px;
-  box-sizing: border-box;
-  gap: 15px;
+.input:focus {
+  outline: none;
+  border: none;
 }
 
-.barra-notoriedade,
-.coisa-final,
-.log,
-.programador-broxin {
-  max-width: 100%;
-  height: auto;
-  display: block;
+.container-pontuacao {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 40px;
+  color: white;
+  text-shadow: 2px 2px 4px #000000;
 }
+
+
 @keyframes shake {
   0% { transform: translateX(0); }
-  20% { transform: translateX(-20px); } 
+  20% { transform: translateX(-20px); }
   40% { transform: translateX(20px); }
   60% { transform: translateX(20px); }
   80% { transform: translateX(-20px); }
@@ -102,4 +103,15 @@ body {
 }
 .shake-animation {
   animation: shake 0.5s ease-in-out 3;
+}
+@keyframes shake2 {
+  0% { transform: translateY(0); }
+  20% { transform: translateY(-5px); }
+  40% { transform: translateY(5px); }
+  60% { transform: translateY(5px); }
+  80% { transform: translateY(5px); }
+  100% { transform: translateY(10px); }
+}
+.shake2-animation {
+  animation: shake2 0.5s ease-in-out 3;
 }
