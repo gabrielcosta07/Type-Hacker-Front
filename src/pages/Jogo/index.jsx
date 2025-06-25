@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import "./jogo.css";
 
 const PALAVRAS = [
@@ -15,6 +16,7 @@ const PALAVRAS = [
 ];
 
 const ZeroDryGame = () => {
+  const navigate = useNavigate();
   const [pontuacao, setPontuacao] = useState(0);
   const [erros, setErros] = useState(0);
   const [sequenciaAcertos, setSequenciaAcertos] = useState(0);
@@ -23,7 +25,6 @@ const ZeroDryGame = () => {
   const [isGameOver, setIsGameOver] = useState(false);
   const [isShaking, setIsShaking] = useState(false);
   const [posicaoVertical, setPosicaoVertical] = useState(0);
-
   const inputRef = useRef(null);
   const gameContainerRef = useRef(null);
 
@@ -43,9 +44,7 @@ const ZeroDryGame = () => {
     iniciarNovaPalavra();
   }, [iniciarNovaPalavra]);
 
-  const fimDeJogo = useCallback(() => {
-    setIsGameOver(true);
-  }, []);
+  const fimDeJogo = useCallback(() => setIsGameOver(true), []);
 
   const tratarErro = useCallback(() => {
     setSequenciaAcertos(0);
@@ -66,14 +65,10 @@ const ZeroDryGame = () => {
   }, [reiniciarJogo]);
 
   useEffect(() => {
-    if (!palavraAtual || isGameOver) {
-      return;
-    }
-
+    if (!palavraAtual || isGameOver) return;
     const velocidade = 1 + erros;
     const gameHeight =
       gameContainerRef.current?.offsetHeight || window.innerHeight;
-
     const intervaloQueda = setInterval(() => {
       setPosicaoVertical((pos) => {
         const novaPosicao = pos + velocidade;
@@ -85,35 +80,16 @@ const ZeroDryGame = () => {
         return novaPosicao;
       });
     }, 50);
-
     return () => clearInterval(intervaloQueda);
   }, [palavraAtual, isGameOver, erros, tratarErro]);
 
-  useEffect(() => {
-    const preventZoom = (event) => {
-      if (event.ctrlKey) {
-        event.preventDefault();
-      }
-    };
-    window.addEventListener("wheel", preventZoom, { passive: false });
-    window.addEventListener("keydown", preventZoom);
-
-    return () => {
-      window.removeEventListener("wheel", preventZoom);
-      window.removeEventListener("keydown", preventZoom);
-    };
-  }, []);
-
   const handleInputChange = (event) => {
-    if (!isGameOver) {
-      setInputValue(event.target.value);
-    }
+    if (!isGameOver) setInputValue(event.target.value);
   };
 
   const handleKeyDown = (event) => {
     if (event.key !== "Enter" || !palavraAtual || isGameOver) return;
     event.preventDefault();
-
     if (inputValue.toLowerCase() === palavraAtual.toLowerCase()) {
       const pontosGanhos = 10 + sequenciaAcertos;
       setPontuacao((prev) => prev + pontosGanhos);
@@ -125,13 +101,11 @@ const ZeroDryGame = () => {
     }
   };
 
+  const goToHome = () => navigate("/");
+
   return (
     <>
-      <div
-        className="container-jogo"
-        style={{ display: isGameOver ? "none" : "flex" }}
-        ref={gameContainerRef}
-      >
+      <div className="container-jogo" ref={gameContainerRef}>
         <div className="Esquerda">
           <div className="sub-container">
             {palavraAtual && (
@@ -155,7 +129,7 @@ const ZeroDryGame = () => {
           <div className="container-input">
             <input
               ref={inputRef}
-              className="input"
+              className="game-input" /* ALTERADO */
               placeholder="Quebre o código!"
               value={inputValue}
               onChange={handleInputChange}
@@ -164,7 +138,6 @@ const ZeroDryGame = () => {
               autoFocus
             />
           </div>
-          <div className="timer"></div>
         </div>
         <div className="Direita">
           <div className="container-pontuacao">
@@ -174,11 +147,12 @@ const ZeroDryGame = () => {
       </div>
 
       {isGameOver && (
-        <div id="tela-game-over" style={{ display: "flex" }}>
+        <div id="tela-game-over">
           <h1>GAME OVER</h1>
           <button id="botao-jogar-novamente" onClick={reiniciarJogo}>
             Jogar Novamente
           </button>
+          <button onClick={goToHome}>Ir para Home</button>
         </div>
       )}
     </>

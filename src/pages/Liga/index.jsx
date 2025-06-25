@@ -12,7 +12,8 @@ const Leagues = () => {
   const [enteredPassword, setEnteredPassword] = useState("");
   const [userLeagues, setUserLeagues] = useState([]);
   const [mostrarMinhasLigas, setMostrarMinhasLigas] = useState(false);
-
+  const [membrosDaLiga, setMembrosDaLiga] = useState([]);
+  const [ligaSelecionada, setLigaSelecionada] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,14 +27,16 @@ const Leagues = () => {
           navigate("/login");
           return;
         }
-        setLeagues(data);
+        setLeagues(Array.isArray(data) ? data : []);
       })
-      .catch((err) => console.error("Erro ao carregar ligas:", err));
+      .catch((err) => {
+        console.error("Erro ao carregar ligas:", err);
+        setLeagues([]);
+      });
   }, [navigate]);
 
   const handleCreate = () => {
     if (!nomeLiga || !palavraChave) return;
-
     fetch("http://localhost/Trabalho-Web1-Jogo-Back/ligas/criar_liga.php", {
       method: "POST",
       credentials: "include",
@@ -95,76 +98,119 @@ const Leagues = () => {
       .catch((err) => console.error("Erro ao entrar na liga:", err));
   };
 
+  const handleVerMembros = (liga) => {
+    setLigaSelecionada(liga);
+    fetch(
+      `http://localhost/Trabalho-Web1-Jogo-Back/ligas/listar_membros.php?id=${liga.id}`,
+      {
+        method: "GET",
+        credentials: "include",
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.success) {
+          alert(data.error || "Erro ao buscar membros.");
+          return;
+        }
+        setMembrosDaLiga(data.membros);
+      })
+      .catch((err) => {
+        console.error("Erro ao buscar membros:", err);
+        alert("Erro de comunicação ao buscar membros.");
+      });
+  };
+
   const ligasFiltradas = mostrarMinhasLigas
     ? leagues.filter(
         (l) =>
-          l.criador_id.toString() === usuario?.id.toString() ||
+          (l.criador_id &&
+            usuario &&
+            l.criador_id.toString() === usuario.id.toString()) ||
           userLeagues.includes(l.id)
       )
     : leagues;
 
   return (
-    <div className="leagues-container">
-      <div className="main-content">
-        <h1 className="title">Ligas</h1>
+    <>
+      <div className="leagues-container">
+        <div className="main-content">
+          <h1 className="title">Ligas</h1>
+          <div className="controls">
+            <button className="home-btn" onClick={() => navigate("/")}>
+              &larr; Voltar para Home
+            </button>
+            <button className="create-btn" onClick={() => setShowForm(true)}>
+              Criar Liga
+            </button>
+            <button
+              className={`filter-btn ${mostrarMinhasLigas ? "active" : ""}`}
+              onClick={() => setMostrarMinhasLigas(!mostrarMinhasLigas)}
+            >
+              {mostrarMinhasLigas ? "Todas as Ligas" : "Minhas Ligas"}
+            </button>
+          </div>
 
-        <div className="controls">
-          <button className="create-btn" onClick={() => setShowForm(true)}>
-            Criar Liga
-          </button>
-
-          <button
-            className={`filter-btn ${mostrarMinhasLigas ? "active" : ""}`}
-            onClick={() => setMostrarMinhasLigas(!mostrarMinhasLigas)}
-          >
-            {mostrarMinhasLigas ? "Todas as Ligas" : "Minhas Ligas"}
-          </button>
-        </div>
-
-        <div className="leagues-list">
-          {ligasFiltradas.map((league) => (
-            <div key={league.id} className="league-card">
-              <div className="league-info">
-                <div className="league-details">
-                  <h3 className="league-name">{league.nome}</h3>
-                  <span className="players">
-                    Jogadores: {league.qtd_jogadores}/{league.max_jogadores}
-                  </span>
-                  <span
-                    className={`creator ${
-                      league.criador_id.toString() === usuario?.id.toString()
-                        ? "voce"
-                        : ""
-                    }`}
-                  >
-                    Criador:{" "}
-                    {league.criador_id.toString() === usuario?.id.toString()
-                      ? "Você"
-                      : league.nome_criador}
-                  </span>
+          <div className="leagues-list-wrapper">
+            <div className="leagues-list">
+              {ligasFiltradas.map((league) => (
+                <div key={league.id} className="league-card">
+                  <div className="league-info">
+                    <div className="league-details">
+                      <h3 className="league-name">{league.nome}</h3>
+                      <span className="players">
+                        Jogadores: {league.qtd_jogadores}/{league.max_jogadores}
+                      </span>
+                      <span
+                        className={`creator ${
+                          league.criador_id &&
+                          usuario &&
+                          league.criador_id.toString() === usuario.id.toString()
+                            ? "voce"
+                            : ""
+                        }`}
+                      >
+                        Criador:{" "}
+                        {league.criador_id &&
+                        usuario &&
+                        league.criador_id.toString() === usuario.id.toString()
+                          ? "Você"
+                          : league.nome_criador}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="buttons">
+                    {userLeagues.includes(league.id) ||
+                    (league.criador_id &&
+                      usuario &&
+                      league.criador_id.toString() ===
+                        usuario.id.toString()) ? (
+                      <button
+                        className="view-members-btn"
+                        onClick={() => handleVerMembros(league)}
+                      >
+                        Ver Membros
+                      </button>
+                    ) : (
+                      <button
+                        className="enter-btn"
+                        onClick={() => handleRequestJoin(league.id)}
+                        disabled={league.qtd_jogadores >= league.max_jogadores}
+                      >
+                        {league.qtd_jogadores >= league.max_jogadores
+                          ? "Lotado"
+                          : "Entrar"}
+                      </button>
+                    )}
+                  </div>
                 </div>
-              </div>
-              {userLeagues.includes(league.id) ||
-              league.criador_id.toString() === usuario?.id.toString() ? (
-                <button className="entered-btn" disabled>
-                  Você já está na liga
-                </button>
-              ) : (
-                <button
-                  className="enter-btn"
-                  onClick={() => handleRequestJoin(league.id)}
-                  disabled={league.qtd_jogadores >= league.max_jogadores}
-                >
-                  {league.qtd_jogadores >= league.max_jogadores
-                    ? "Lotado"
-                    : "Entrar"}
-                </button>
-              )}
+              ))}
             </div>
-          ))}
+          </div>
         </div>
       </div>
 
+      {}
       {showForm && (
         <div className="modal">
           <div className="modal-content">
@@ -181,8 +227,17 @@ const Leagues = () => {
               value={palavraChave}
               onChange={(e) => setPalavraChave(e.target.value)}
             />
-            <button onClick={handleCreate}>Criar</button>
-            <button onClick={() => setShowForm(false)}>Cancelar</button>
+            <div className="modal-buttons">
+              <button className="modal-btn primary" onClick={handleCreate}>
+                Criar
+              </button>
+              <button
+                className="modal-btn secondary"
+                onClick={() => setShowForm(false)}
+              >
+                Cancelar
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -197,12 +252,46 @@ const Leagues = () => {
               value={enteredPassword}
               onChange={(e) => setEnteredPassword(e.target.value)}
             />
-            <button onClick={handleJoin}>Entrar</button>
-            <button onClick={() => setJoiningLeagueId(null)}>Cancelar</button>
+            <div className="modal-buttons">
+              <button className="modal-btn primary" onClick={handleJoin}>
+                Entrar
+              </button>
+              <button
+                className="modal-btn secondary"
+                onClick={() => setJoiningLeagueId(null)}
+              >
+                Cancelar
+              </button>
+            </div>
           </div>
         </div>
       )}
-    </div>
+
+      {ligaSelecionada !== null && (
+        <div className="modal">
+          <div className="modal-content">
+            <h2>Membros de "{ligaSelecionada.nome}"</h2>
+            <ul className="members-list">
+              {membrosDaLiga.length > 0 ? (
+                membrosDaLiga.map((membro) => (
+                  <li key={membro.id} className="member-item">
+                    {membro.nome}
+                  </li>
+                ))
+              ) : (
+                <li>Nenhum membro encontrado.</li>
+              )}
+            </ul>
+            <button
+              className="modal-btn secondary"
+              onClick={() => setLigaSelecionada(null)}
+            >
+              Fechar
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

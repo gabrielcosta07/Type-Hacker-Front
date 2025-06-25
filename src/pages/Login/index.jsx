@@ -1,8 +1,7 @@
 import "./login.css";
 import { FaUser, FaLock } from "react-icons/fa";
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -10,12 +9,19 @@ function Login() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  /*validando email*/
+
+  useEffect(() => {
+    const usuario = localStorage.getItem("usuario");
+    if (usuario) {
+      navigate("/");
+    }
+  }, [navigate]);
+
   const isValidEmail = (emailToValidate) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(emailToValidate);
   };
-  /* aqui vai o code para enviar para o php e la no back vai gravar no DB */
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");
@@ -38,20 +44,11 @@ function Login() {
         "http://localhost/Trabalho-Web1-Jogo-Back/auth/login.php",
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: 'include',
-          body: JSON.stringify({
-            email: email,
-            senha: senha,
-          }),
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ email, senha }),
         }
       );
-
-      const data = await response.json();
-
-      setLoading(false);
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({
@@ -60,10 +57,10 @@ function Login() {
         throw new Error(errorData.message || `Erro HTTP: ${response.status}`);
       }
 
-      console.log("Login bem-sucedido:", data);
-      
+      const data = await response.json();
+      setLoading(false);
+
       if (data.success) {
-        console.log("Login realizado!", data.message);
         localStorage.setItem("usuario", JSON.stringify(data.user));
         navigate("/");
       } else {
@@ -71,7 +68,7 @@ function Login() {
       }
     } catch (err) {
       setLoading(false);
-      console.error("Falha ao tentar fazer login:", err);
+      console.error("Erro no login:", err);
       setError(
         err.message ||
           "Não foi possível conectar ao servidor. Tente novamente mais tarde."
@@ -83,7 +80,7 @@ function Login() {
     <div className="container-login">
       <div className="login">
         <form className="form-login" onSubmit={handleSubmit}>
-          <h2 typeof="title">Login</h2>
+          <h2>Login</h2>
           {error && <p className="error-message">{error}</p>}
           <div className="input-container">
             <FaUser className="icon" />
@@ -92,7 +89,7 @@ function Login() {
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="input"
+              className="login-input"
               disabled={loading}
             />
           </div>
@@ -103,12 +100,12 @@ function Login() {
               placeholder="Senha"
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
-              className="input"
+              className="login-input"
               disabled={loading}
             />
           </div>
           <button className="btn-login" type="submit" disabled={loading}>
-            Entrar
+            {loading ? "Entrando..." : "Entrar"}
           </button>
           <p>
             Não possui uma conta? <Link to="/Registrar">Registre-se</Link>

@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
 
 * {
   margin: 0;
@@ -25,26 +25,24 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 14px;
+  gap: 20px;
   flex-direction: column;
   width: 100%;
 }
 
 .login {
   display: flex;
-  top: 0;
   justify-content: center;
   align-items: center;
-  height: 100%;
   flex-direction: column;
-  background: transparent;
-  background: rgba(0, 0, 0, 0.363);
+  background: rgba(0, 0, 0, 0.4);
   box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
   border-radius: 16px;
   width: 100%;
-  padding: 6rem 4rem;
+  padding: 4rem;
   margin-right: 5%;
-  max-width: 40%;
+  max-width: 450px;
+  backdrop-filter: blur(5px);
 }
 
 .login h2 {
@@ -55,190 +53,113 @@
 }
 
 .input-container {
-  padding: 1.2rem;
-  border: 1px solid white;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 10px;
-  width: 20rem;
-  height: 4.5rem;
-  max-width: 150%;
-  
+  padding: 1rem;
+  transition: border-color 0.3s ease;
 }
 
-.input-container input {
-  padding: 0.5rem;
-  border: none;
-  outline: none;
-  background: transparent;
-  text-decoration-color: #fff;
-  color: #fff;
-}
-
-.btn-login {
-  margin: 24px auto 0 auto;
-  display: block;
-  padding: 0.7rem;
-  width: 40%;
-  border-radius: 10rem;
-  border: none;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-family: Poppins, sans-serif;
-  font-weight: 600;
-}
-
-.btn-login:hover {
-  background-color: #bbb3b3;
-  transform: scale(1.03);
+.input-container:focus-within {
+  border-color: #00ffff;
 }
 
 .icon {
   color: #fff;
+  font-size: 1.2rem;
+}
+
+.login-input { 
+  flex: 1;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #fff;
+}
+
+.login-input::placeholder { /* ALTERADO */
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 300;
+}
+
+.btn-login {
+  margin: 24px auto 0 auto;
+  padding: 0.8rem;
+  width: 50%;
+  border-radius: 10rem;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  background-color: #00ffff;
+  color: #1a1a1a;
+  transition: all 0.3s ease;
+}
+
+.btn-login:hover {
+  background-color: #fff;
+  transform: scale(1.03);
+}
+
+.btn-login:disabled {
+  background-color: #555;
+  cursor: not-allowed;
 }
 
 .form-login p {
-  display: flex;
   color: #fff;
   font-size: 0.9rem;
-
   text-align: center;
 }
 
 .form-login a {
-  display: flex;
-  color: #fff;
-  font-size: 1rem;
+  color: #00ffff;
+  font-size: 0.9rem;
   text-decoration: none;
-  margin-left: 4px;
-  margin-top: -1px;
+  margin-left: 5px;
+  font-weight: 600;
 }
 
 .form-login a:hover {
   text-decoration: underline;
 }
 
-/* Responsividade*/
 @media (max-width: 1024px) {
   .container-login {
-    background-image: url("../../assets/background_login_response.png");
     justify-content: center;
     background-position: center center;
   }
-
   .login {
     width: 80%;
-    max-width: 80%;
+    max-width: 500px;
     margin: 0 auto;
-    backdrop-filter: blur(5px);
-  }
-
-  .input-container {
-    width: 70%;
-  }
-
-  .btn-login {
-    width: 50%;
-  }
-
-  .form-login {
-    gap: 10px;
-    width: 90%;
   }
 }
 
 @media (max-width: 768px) {
-  .container-login {
-    background-image: url("../../assets/background_login_response.png");
-    justify-content: center;
-    background-position: center center;
-  }
-
   .login {
-    width: 100%;
-    max-width: 90%;
-    margin: 0 auto;
-    backdrop-filter: blur(5px);
-  }
-
-  .input-container {
     width: 90%;
+    padding: 3rem 2rem;
   }
-
   .btn-login {
     width: 70%;
   }
-
-  .form-login {
-    gap: 10px;
-    width: 90%;
-  }
 }
 
-@media (max-width: 530px){
+@media (max-width: 530px) {
   .login h2 {
-    font-size: 1.5rem;
+    font-size: 2rem;
   }
-
-  .form-login p,
-  .form-login a {
-    font-size: 0.85rem;
+  .form-login {
+    gap: 15px;
   }
-  .login {
-    min-width: 100%;
-    max-width: 90%;
-    margin: 0 auto;
-    max-height: 40rem;
-  }
-
-  .form-login{
-    min-width: 120%;
-    align-items: center;
-  }
-
-  
-
-   .btn-login {
+  .btn-login {
     width: 80%;
   }
-
-
-  
 }
-
-@media (max-width: 320px) {
-  .login h2 {
-    font-size: 1.5rem;
-  }
-
-  .form-login p,
-  .form-login a {
-    font-size: 0.85rem;
-  }
-  .login {
-    min-width: 100%;
-    max-width: 90%;
-    margin: 0 auto;
-    max-height: 40rem;
-    height: 26rem;
-    min-height: 100%;
-  }
-
-  .form-login{
-    min-width: 175%;
-    align-items: center;
-  }
-
-  .input-container{
-    display : flex;
-    justify-content: center;
-    position: relative;
-  }
-
-
-  .icon{
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-  }
-}
-
