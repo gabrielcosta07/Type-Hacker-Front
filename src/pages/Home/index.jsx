@@ -12,7 +12,9 @@ function Home() {
           <button className="btn" onClick={() => navigate("/Jogo")}>
             Iniciar Ataque
           </button>
-          <button className="btn">Ranking</button>
+          <button className="btn" onClick={() => navigate("/Ranking")}>
+            Ranking
+          </button>
           <button className="btn" onClick={() => navigate("/Liga")}>
             Liga
           </button>

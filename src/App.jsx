@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Registrar from "./pages/Registrar";
 import Jogo from "./pages/Jogo";
 import Liga from "./pages/Liga";
+import Ranking from "./pages/Ranking";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <Route path="/Registrar" element={<Registrar />} />
       <Route path="/Jogo" element={<Jogo />} />
       <Route path="/Liga" element={<Liga />} />
+      <Route path="/Ranking" element={<Ranking />} />
     </Routes>
   );
 }

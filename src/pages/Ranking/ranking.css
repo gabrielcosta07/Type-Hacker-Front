@@ -1,0 +1,128 @@
+/* Para usar o ícone de troféu, instale com: npm install react-icons */
+
+.ranking-container {
+  min-height: 100vh;
+  width: 100%;
+  padding: 40px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  /* IMPORTANTE: Use o mesmo fundo da sua tela de Ligas */
+  /* Exemplo: */
+  background-image: url("../../assets/background_azul.jpg");
+  background-size: cover;
+  background-position: center;
+  color: white;
+}
+
+.ranking-title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  margin-bottom: 40px;
+  background: linear-gradient(135deg, #ffffff, #00ffff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.ranking-tabs {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 40px;
+  background: rgba(0, 40, 60, 0.2);
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 255, 255, 0.2);
+}
+
+.ranking-tabs button {
+  padding: 10px 25px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.ranking-tabs button:hover {
+  color: white;
+  background: rgba(0, 255, 255, 0.1);
+}
+
+.ranking-tabs button.active {
+  color: #0a0f1c;
+  background: #00ffff;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+}
+
+.ranking-list {
+  width: 100%;
+  max-width: 800px;
+  background: rgba(0, 40, 60, 0.2);
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.ranking-list ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ranking-item {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  font-size: 1.2rem;
+  border-bottom: 1px solid rgba(0, 255, 255, 0.1);
+  transition: background-color 0.3s ease;
+}
+
+.ranking-item:last-child {
+  border-bottom: none;
+}
+
+.ranking-item:hover {
+  background-color: rgba(0, 255, 255, 0.05);
+}
+
+.ranking-position {
+  font-weight: bold;
+  font-size: 1.5rem;
+  width: 80px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.ranking-name {
+  flex-grow: 1;
+  font-weight: 600;
+}
+
+.ranking-score {
+  font-weight: bold;
+  color: #00ffff;
+}
+
+/* Estilos para o Top 3 */
+.ranking-trophy-icon {
+  margin-left: 10px;
+}
+
+.rank-1 .ranking-position {
+  color: #ffd700;
+} /* Ouro */
+.rank-2 .ranking-position {
+  color: #c0c0c0;
+} /* Prata */
+.rank-3 .ranking-position {
+  color: #cd7f32;
+} /* Bronze */

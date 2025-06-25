@@ -1,5 +1,4 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import "./jogo.css";
 
 const PALAVRAS = [
@@ -16,30 +15,27 @@ const PALAVRAS = [
 ];
 
 const ZeroDryGame = () => {
-  const navigate = useNavigate();
+  const [pontuacao, setPontuacao] = useState(0);
+  const [erros, setErros] = useState(0);
+  const [sequenciaAcertos, setSequenciaAcertos] = useState(0);
+  const [palavraAtual, setPalavraAtual] = useState("");
+  const [inputValue, setInputValue] = useState("");
+  const [isGameOver, setIsGameOver] = useState(false);
+  const [isShaking, setIsShaking] = useState(false);
+  const [posicaoVertical, setPosicaoVertical] = useState(0);
 
-  const [pontuacao, setPontuacao] = React.useState(0);
-  const [erros, setErros] = React.useState(0);
-  const [sequenciaAcertos, setSequenciaAcertos] = React.useState(0);
-  const [palavraAtual, setPalavraAtual] = React.useState("");
-  const [inputValue, setInputValue] = React.useState("");
-  const [isGameOver, setIsGameOver] = React.useState(false);
-  const [isShaking, setIsShaking] = React.useState(false);
+  const inputRef = useRef(null);
+  const gameContainerRef = useRef(null);
 
-  const [posicaoVertical, setPosicaoVertical] = React.useState(0);
-
-  const inputRef = React.useRef(null);
-  const gameContainerRef = React.useRef(null);
-
-  const iniciarNovaPalavra = React.useCallback(() => {
+  const iniciarNovaPalavra = useCallback(() => {
     setIsShaking(false);
     setInputValue("");
     setPosicaoVertical(0);
-    setPalavraAtual(PALAVRAS[(Math.random() * PALAVRAS.length) | 0]);
+    setPalavraAtual(PALAVRAS[Math.floor(Math.random() * PALAVRAS.length)]);
     inputRef.current?.focus();
   }, []);
 
-  const reiniciarJogo = React.useCallback(() => {
+  const reiniciarJogo = useCallback(() => {
     setPontuacao(0);
     setErros(0);
     setSequenciaAcertos(0);
@@ -47,38 +43,44 @@ const ZeroDryGame = () => {
     iniciarNovaPalavra();
   }, [iniciarNovaPalavra]);
 
-  const fimDeJogo = () => {
+  const fimDeJogo = useCallback(() => {
     setIsGameOver(true);
-  };
+  }, []);
 
-  const tratarErro = React.useCallback(() => {
+  const tratarErro = useCallback(() => {
     setSequenciaAcertos(0);
-    const novosErros = erros + 1;
-    setErros(novosErros);
+    setErros((prevErros) => {
+      const novosErros = prevErros + 1;
+      if (novosErros >= 3) {
+        fimDeJogo();
+      }
+      return novosErros;
+    });
     setInputValue("");
-
     setIsShaking(true);
     setTimeout(() => setIsShaking(false), 500);
+  }, [fimDeJogo]);
 
-    if (novosErros >= 3) {
-      fimDeJogo();
+  useEffect(() => {
+    reiniciarJogo();
+  }, [reiniciarJogo]);
+
+  useEffect(() => {
+    if (!palavraAtual || isGameOver) {
+      return;
     }
-  }, [erros]);
 
-  React.useEffect(() => {
-    if (!palavraAtual || isGameOver) return;
-
+    const velocidade = 1 + erros;
     const gameHeight =
       gameContainerRef.current?.offsetHeight || window.innerHeight;
-    const velocidade = 1 + erros;
 
     const intervaloQueda = setInterval(() => {
-      setPosicaoVertical((prevPos) => {
-        const novaPosicao = prevPos + velocidade;
-        if (novaPosicao > gameHeight) {
+      setPosicaoVertical((pos) => {
+        const novaPosicao = pos + velocidade;
+        if (novaPosicao > gameHeight - 50) {
           clearInterval(intervaloQueda);
           tratarErro();
-          return prevPos;
+          return pos;
         }
         return novaPosicao;
       });
@@ -87,23 +89,18 @@ const ZeroDryGame = () => {
     return () => clearInterval(intervaloQueda);
   }, [palavraAtual, isGameOver, erros, tratarErro]);
 
-  React.useEffect(() => {
-    reiniciarJogo();
-  }, [reiniciarJogo]);
-
-  React.useEffect(() => {
+  useEffect(() => {
     const preventZoom = (event) => {
       if (event.ctrlKey) {
         event.preventDefault();
       }
     };
-
-    window.addEventListener("keydown", preventZoom);
     window.addEventListener("wheel", preventZoom, { passive: false });
+    window.addEventListener("keydown", preventZoom);
 
     return () => {
-      window.removeEventListener("keydown", preventZoom);
       window.removeEventListener("wheel", preventZoom);
+      window.removeEventListener("keydown", preventZoom);
     };
   }, []);
 
@@ -121,38 +118,39 @@ const ZeroDryGame = () => {
       const pontosGanhos = 10 + sequenciaAcertos;
       setPontuacao((prev) => prev + pontosGanhos);
       setSequenciaAcertos((prev) => prev + 1);
-
       setIsShaking(true);
-      setTimeout(() => {
-        iniciarNovaPalavra();
-      }, 500);
+      setTimeout(() => iniciarNovaPalavra(), 500);
     } else {
       tratarErro();
     }
   };
 
-  const goToHome = () => {
-    navigate("/");
-  };
-
   return (
     <>
-      <div className="container-jogo" ref={gameContainerRef}>
+      <div
+        className="container-jogo"
+        style={{ display: isGameOver ? "none" : "flex" }}
+        ref={gameContainerRef}
+      >
         <div className="Esquerda">
           <div className="sub-container">
-            <div
-              className={`palavra-atual ${isShaking ? "shake-animation" : ""}`}
-              style={{
-                top: `${posicaoVertical}px`,
-                color:
-                  isShaking &&
-                  inputValue.toLowerCase() === palavraAtual.toLowerCase()
-                    ? "green"
-                    : "white",
-              }}
-            >
-              {palavraAtual}
-            </div>
+            {palavraAtual && (
+              <div
+                className={`palavra-atual ${
+                  isShaking ? "shake-animation" : ""
+                }`}
+                style={{
+                  top: `${posicaoVertical}px`,
+                  color:
+                    isShaking &&
+                    inputValue.toLowerCase() === palavraAtual.toLowerCase()
+                      ? "lightgreen"
+                      : "white",
+                }}
+              >
+                {palavraAtual}
+              </div>
+            )}
           </div>
           <div className="container-input">
             <input
@@ -175,16 +173,14 @@ const ZeroDryGame = () => {
         </div>
       </div>
 
-      <div
-        id="tela-game-over"
-        style={{ display: isGameOver ? "flex" : "none" }}
-      >
-        <h1>GAME OVER</h1>
-        <button id="botao-jogar-novamente" onClick={reiniciarJogo}>
-          Jogar Novamente
-        </button>
-        <button onClick={goToHome}>Ir para Home</button>
-      </div>
+      {isGameOver && (
+        <div id="tela-game-over" style={{ display: "flex" }}>
+          <h1>GAME OVER</h1>
+          <button id="botao-jogar-novamente" onClick={reiniciarJogo}>
+            Jogar Novamente
+          </button>
+        </div>
+      )}
     </>
   );
 };
