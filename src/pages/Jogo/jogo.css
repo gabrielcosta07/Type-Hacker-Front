@@ -1,10 +1,180 @@
-/* style.css */
-.backgroundJogo {
-  position: fixed; 
+@import url("https://fonts.googleapis.com/css2?family=Jersey+15&display=swap");
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Jersey 15", sans-serif;
+  overflow: hidden;
+}
+
+.container-jogo {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  background-image: url("../../assets/fundo.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+.Esquerda {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.sub-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.palavra-atual {
+  font-size: 40px;
+  font-family: "Jersey 15", sans-serif;
+  color: rgb(255, 255, 255);
+  position: absolute;
+  top: 10%;
+  left: 3%;
+  text-shadow: 2px 2px 4px #000;
+}
+
+.container-input {
+  position: absolute;
+  font-family: "Jersey 15", sans-serif;
+  bottom: 20px;
+  left: 5%;
+  transform: translateX(-5%);
+  width: 1000px;
+  height: 100px;
+}
+
+.input {
+  width: 100%;
+  height: 100%;
+  font-size: 40px;
+  background-image: url("../../assets/Campo_Digitar.png");
+  background-size: 100% 100%;
+  background-position: center;
+  color: white;
+  background-color: transparent;
+  border: none;
+  font-family: "Jersey 15", sans-serif;
+  padding: 15px 30px;
+  box-sizing: border-box;
+  text-align: left;
+  padding-left: 100px;
+  line-height: 70px;
+}
+.input::placeholder {
+  color: white;
+  font-size: 40px;
+  font-family: "Jersey 15", sans-serif;
+  opacity: 1;
+}
+.input:focus {
+  outline: none;
+  border: none;
+}
+
+.container-pontuacao {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 40px;
+  color: white;
+  text-shadow: 2px 2px 4px #000000;
+}
+
+@keyframes shake {
+  0% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-20px);
+  }
+  40% {
+    transform: translateX(20px);
+  }
+  60% {
+    transform: translateX(20px);
+  }
+  80% {
+    transform: translateX(-20px);
+  }
+  100% {
+    transform: translateX(20px);
+  }
+}
+.shake-animation {
+  animation: shake 0.5s ease-in-out 3;
+}
+@keyframes shake2 {
+  0% {
+    transform: translateY(0);
+  }
+  20% {
+    transform: translateY(-5px);
+  }
+  40% {
+    transform: translateY(5px);
+  }
+  60% {
+    transform: translateY(5px);
+  }
+  80% {
+    transform: translateY(5px);
+  }
+  100% {
+    transform: translateY(10px);
+  }
+}
+.shake2-animation {
+  animation: shake2 0.5s ease-in-out 3;
+}
+#tela-game-over {
+  position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
-  height: 100vh; 
-  object-fit: cover; 
-  z-index: -1; 
+  height: 100vh;
+  background-color: rgba(200, 0, 0, 0.6);
+  color: white;
+  z-index: 1000;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#tela-game-over h1 {
+  font-family: "Jersey 15", sans-serif;
+  font-size: 10rem;
+  text-shadow: 4px 4px 8px #000;
+  margin: 0;
+}
+
+#tela-game-over button {
+  font-family: "Jersey 15", sans-serif;
+  font-size: 2.5rem;
+  color: white;
+  background-color: #333;
+  border: 2px solid white;
+  border-radius: 10px;
+  padding: 15px 30px;
+  margin-top: 30px;
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+#tela-game-over button:hover {
+  background-color: #111;
+  transform: scale(1.05);
 }
