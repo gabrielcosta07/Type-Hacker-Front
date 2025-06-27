@@ -9,6 +9,7 @@
   background-size: cover;
   background-position: center;
   color: white;
+  background-image: url('../../assets/background_azul.jpg');
 }
 
 .ranking-title {
