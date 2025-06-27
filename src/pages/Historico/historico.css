@@ -1,0 +1,63 @@
+.historico-container {
+  width: 90%;
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: rgba(0, 20, 40, 0.8);
+  border-radius: 12px;
+  color: #e0e0e0;
+}
+
+.historico-title {
+  text-align: center;
+  color: #00aaff;
+  margin-bottom: 25px;
+}
+
+.back-home-button {
+  background-color: transparent;
+  border: 1px solid white;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  display: block;
+  margin: 0 auto 30px auto;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.back-home-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.historico-list table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+.historico-list th,
+.historico-list td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #003366;
+}
+
+.historico-list th {
+  background-color: #003366;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.historico-list tbody tr:nth-child(even) {
+  background-color: rgba(0, 30, 60, 0.5);
+}
+
+.historico-list tbody tr:hover {
+  background-color: #005599;
+}
+
+.error-message {
+  color: #ff4d4d;
+  text-align: center;
+}

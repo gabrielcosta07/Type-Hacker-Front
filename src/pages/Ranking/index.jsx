@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // useNavigate já estava importado
 import { FaTrophy } from "react-icons/fa";
 import "./ranking.css";
 
@@ -11,6 +12,9 @@ const Ranking = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Hook para navegação
+  const navigate = useNavigate();
 
   useEffect(() => {
     setIsLoading(true);
@@ -50,10 +54,20 @@ const Ranking = () => {
     return "";
   };
 
+  // Função para navegar para a Home
+  const goToHome = () => {
+    navigate("/");
+  };
+
   const currentRankingData = rankings[activeTab] || [];
 
   return (
     <div className="ranking-container">
+      {/* --- BOTÃO ADICIONADO AQUI --- */}
+      <button onClick={goToHome} className="back-home-button">
+        &larr; Voltar para Home
+      </button>
+
       <h1 className="ranking-title">Ranking</h1>
 
       <div className="ranking-tabs">

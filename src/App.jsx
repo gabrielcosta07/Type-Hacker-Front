@@ -5,6 +5,7 @@ import Registrar from "./pages/Registrar";
 import Jogo from "./pages/Jogo";
 import Liga from "./pages/Liga";
 import Ranking from "./pages/Ranking";
+import Historico from "./pages/Historico";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
       <Route path="/Jogo" element={<Jogo />} />
       <Route path="/Liga" element={<Liga />} />
       <Route path="/Ranking" element={<Ranking />} />
+      <Route path="/Historico" element={<Historico />} />
     </Routes>
   );
 }

@@ -50,6 +50,10 @@ function Home() {
             Liga
           </button>
 
+          <button className="btn" onClick={() => navigate("/Historico")}>
+            Histórico
+          </button>
+
           <button className="btn logout" onClick={handleLogout}>
             Sair
           </button>
