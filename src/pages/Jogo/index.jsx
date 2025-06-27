@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "./jogo.css";
 import PALAVRAS from "./palavras.json";
 
-const ZeroDryGame = () => {
+const TypeHacker = () => {
   const navigate = useNavigate();
   const [pontuacao, setPontuacao] = useState(0);
   const [erros, setErros] = useState(0);
@@ -11,11 +11,10 @@ const ZeroDryGame = () => {
   const [palavraAtual, setPalavraAtual] = useState("");
   const [inputValue, setInputValue] = useState("");
   const [isGameOver, setIsGameOver] = useState(false);
-  const [isShaking, setIsShaking] = useState(false); // Mantido para a animação de erro
-  
-  // NOVO ESTADO: Para controlar a nova animação de acerto
+  const [isShaking, setIsShaking] = useState(false);
+
   const [isCorrect, setIsCorrect] = useState(false);
-  
+
   const [posicaoVertical, setPosicaoVertical] = useState(0);
   const [tempoInicio, setTempoInicio] = useState(null);
   const [acertosTotais, setAcertosTotais] = useState(0);
@@ -53,14 +52,20 @@ const ZeroDryGame = () => {
     setIsGameOver(true);
 
     const tempoFim = Date.now();
-    const tempoJogado = tempoInicio ? Math.round((tempoFim - tempoInicio) / 1000) : 0;
-    const dadosPartida = { pontos: pontuacao, erros, tempo_jogado: tempoJogado };
+    const tempoJogado = tempoInicio
+      ? Math.round((tempoFim - tempoInicio) / 1000)
+      : 0;
+    const dadosPartida = {
+      pontos: pontuacao,
+      erros,
+      tempo_jogado: tempoJogado,
+    };
     salvarPontuacao(dadosPartida);
   }, [pontuacao, erros, tempoInicio, salvarPontuacao]);
 
   const iniciarNovaPalavra = useCallback(() => {
     setIsShaking(false);
-    setIsCorrect(false); // Garante que a animação de acerto pare
+    setIsCorrect(false);
     setInputValue("");
     setPosicaoVertical(0);
     setPalavraAtual(PALAVRAS[Math.floor(Math.random() * PALAVRAS.length)]);
@@ -89,14 +94,14 @@ const ZeroDryGame = () => {
       return novosErros;
     });
     setInputValue("");
-    setIsShaking(true); // Ativa a animação de erro (shake)
+    setIsShaking(true);
     setTimeout(() => setIsShaking(false), 500);
   }, [fimDeJogo]);
 
   useEffect(() => {
     reiniciarJogo();
   }, [reiniciarJogo]);
-  
+
   useEffect(() => {
     let intervalo;
     if (!isGameOver) {
@@ -112,7 +117,7 @@ const ZeroDryGame = () => {
     const inputElement = inputRef.current;
     if (!inputElement) return;
     const limiteDeQueda = inputElement.getBoundingClientRect().top;
-    const velocidade = 1 + erros + (acertosTotais * 0.2);
+    const velocidade = 1 + erros + acertosTotais * 0.2;
 
     const intervaloQueda = setInterval(() => {
       setPosicaoVertical((pos) => {
@@ -136,15 +141,13 @@ const ZeroDryGame = () => {
     if (event.key !== "Enter" || !palavraAtual || isGameOver) return;
     event.preventDefault();
     if (inputValue.toLowerCase() === palavraAtual.toLowerCase()) {
-      // MUDANÇA: Ativa a nova animação de acerto
       setIsCorrect(true);
-      
+
       setAcertosTotais((prev) => prev + 1);
       const pontosGanhos = 10 + sequenciaAcertos;
       setPontuacao((prev) => prev + pontosGanhos);
       setSequenciaAcertos((prev) => prev + 1);
-      
-      // A nova palavra só é iniciada após a animação terminar
+
       setTimeout(() => iniciarNovaPalavra(), 500);
     } else {
       tratarErro();
@@ -152,19 +155,18 @@ const ZeroDryGame = () => {
   };
 
   const goToHome = () => navigate("/");
-  
+
   const formatarTempo = (segundos) => {
     const min = Math.floor(segundos / 60);
     const seg = segundos % 60;
     return `${String(min).padStart(2, "0")}:${String(seg).padStart(2, "0")}`;
   };
-  
-  // MUDANÇA: Lógica para decidir qual classe de animação usar
+
   let animationClass = "";
   if (isCorrect) {
-    animationClass = "correct-word-animation"; // Nova animação de acerto
+    animationClass = "correct-word-animation";
   } else if (isShaking) {
-    animationClass = "shake-animation"; // Animação de erro
+    animationClass = "shake-animation";
   }
 
   return (
@@ -174,10 +176,9 @@ const ZeroDryGame = () => {
           <div className="sub-container">
             {palavraAtual && (
               <div
-                className={`palavra-atual ${animationClass}`} // Classe de animação dinâmica
+                className={`palavra-atual ${animationClass}`}
                 style={{
                   top: `${posicaoVertical}px`,
-                  // A cor agora é controlada pelo CSS
                 }}
               >
                 {palavraAtual}
@@ -197,7 +198,7 @@ const ZeroDryGame = () => {
             />
           </div>
         </div>
-        
+
         <div className="Direita">
           <div className="container-pontuacao">
             PONTUAÇÃO: <span id="pontos">{pontuacao}</span>
@@ -206,7 +207,6 @@ const ZeroDryGame = () => {
             TEMPO: <span>{formatarTempo(tempoDecorrido)}</span>
           </div>
         </div>
-
       </div>
 
       {isGameOver && (
@@ -223,4 +223,4 @@ const ZeroDryGame = () => {
   );
 };
 
-export default ZeroDryGame;
+export default TypeHacker;
