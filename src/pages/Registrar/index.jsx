@@ -18,7 +18,7 @@ function Registrar() {
   const enviarFormulario = (e) => {
     e.preventDefault();
     setError("");
-    if (!email || !senha) {
+    if (!nome || !email || !senha || !confirmarSenha) {
       setError("Por favor, preencha todos os campos.");
       setLoading(false);
       return;
@@ -36,6 +36,8 @@ function Registrar() {
       return;
     }
 
+    setLoading(true);
+    
     fetch("http://localhost/Trabalho-Web1-Jogo-Back/auth/registrar.php", {
       method: "POST",
       headers: { "Content-type": "application/json" },
@@ -44,6 +46,7 @@ function Registrar() {
         nome: nome,
         email: email,
         senha: senha,
+        confirmarSenha: confirmarSenha,
       }),
     })
       .then(async (res) => {
