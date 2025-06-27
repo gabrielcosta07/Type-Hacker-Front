@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "./liga.css";
 
 const Leagues = () => {
-  const usuario = JSON.parse(localStorage.getItem("usuario"));
+  const [usuario, setUsuario] = useState(null);
   const [leagues, setLeagues] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [nomeLiga, setNomeLiga] = useState("");
@@ -17,17 +17,34 @@ const Leagues = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const usuarioLogado = JSON.parse(localStorage.getItem("usuario"));
+    if (!usuarioLogado) {
+      navigate("/login");
+      return;
+    }
+    setUsuario(usuarioLogado);
+
     fetch("http://localhost/Trabalho-Web1-Jogo-Back/ligas/listar_ligas.php", {
-      method: "POST",
+      method: "GET",
       credentials: "include",
     })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success === false && data.error === "Não autenticado") {
-          navigate("/login");
-          return;
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
         }
-        setLeagues(Array.isArray(data) ? data : []);
+        return res.json();
+      })
+      .then((data) => {
+        if (data.success === false) {
+          if (data.error === "Não autenticado") {
+            navigate("/login");
+          }
+          throw new Error(data.error || "Falha ao buscar dados.");
+        }
+        setLeagues(Array.isArray(data.ligas) ? data.ligas : []);
+        setUserLeagues(
+          Array.isArray(data.minhas_ligas_ids) ? data.minhas_ligas_ids : []
+        );
       })
       .catch((err) => {
         console.error("Erro ao carregar ligas:", err);
@@ -36,7 +53,7 @@ const Leagues = () => {
   }, [navigate]);
 
   const handleCreate = () => {
-    if (!nomeLiga || !palavraChave) return;
+    if (!nomeLiga || !palavraChave || !usuario) return;
     fetch("http://localhost/Trabalho-Web1-Jogo-Back/ligas/criar_liga.php", {
       method: "POST",
       credentials: "include",
@@ -49,12 +66,12 @@ const Leagues = () => {
           const novaLiga = {
             id: newLeague.liga_id,
             nome: nomeLiga,
-            nome_criador: "Você",
+            nome_criador: usuario.nome,
             qtd_jogadores: 1,
             max_jogadores: 10,
             criador_id: usuario.id,
           };
-          setLeagues((prev) => [...prev, novaLiga]);
+          setLeagues((prev) => [novaLiga, ...prev]);
           setUserLeagues((prev) => [...prev, novaLiga.id]);
           setShowForm(false);
           setNomeLiga("");
@@ -77,7 +94,7 @@ const Leagues = () => {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, palavra_chave: enteredPassword }),
+      body: JSON.stringify({ liga_id: id, palavra_chave: enteredPassword }),
     })
       .then((res) => res.json())
       .then((result) => {
@@ -121,15 +138,81 @@ const Leagues = () => {
       });
   };
 
-  const ligasFiltradas = mostrarMinhasLigas
-    ? leagues.filter(
-        (l) =>
-          (l.criador_id &&
-            usuario &&
-            l.criador_id.toString() === usuario.id.toString()) ||
-          userLeagues.includes(l.id)
+  const handleSairLiga = (ligaId) => {
+    if (!window.confirm("Tem certeza que deseja sair desta liga?")) return;
+    fetch("http://localhost/Trabalho-Web1-Jogo-Back/ligas/sair_liga.php", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ liga_id: ligaId }),
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.success) {
+          setUserLeagues((prev) => prev.filter((id) => id !== ligaId));
+          setLeagues((prev) =>
+            prev.map((league) =>
+              league.id === ligaId
+                ? {
+                    ...league,
+                    qtd_jogadores: Math.max(0, league.qtd_jogadores - 1),
+                  }
+                : league
+            )
+          );
+          alert("Você saiu da liga.");
+        } else {
+          alert(result.error || "Não foi possível sair da liga.");
+        }
+      })
+      .catch((err) => {
+        console.error("Erro ao sair da liga:", err);
+        alert("Erro de comunicação ao tentar sair da liga.");
+      });
+  };
+
+  const handleExcluirLiga = (ligaId, nomeLiga) => {
+    if (
+      !window.confirm(
+        `Tem certeza que deseja excluir a liga "${nomeLiga}"? Esta ação não pode ser desfeita.`
       )
+    ) {
+      return;
+    }
+
+    fetch("http://localhost/Trabalho-Web1-Jogo-Back/ligas/excluir_liga.php", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ liga_id: ligaId }),
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.success) {
+          setLeagues((prev) => prev.filter((league) => league.id !== ligaId));
+          setUserLeagues((prev) => prev.filter((id) => id !== ligaId));
+          alert("Liga excluída com sucesso.");
+        } else {
+          alert(result.error || "Não foi possível excluir a liga.");
+        }
+      })
+      .catch((err) => {
+        console.error("Erro ao excluir a liga:", err);
+        alert("Erro de comunicação ao tentar excluir a liga.");
+      });
+  };
+
+  const isCriador = (league) =>
+    usuario && league.criador_id.toString() === usuario.id.toString();
+  const isMembro = (league) => userLeagues.includes(league.id);
+
+  const ligasFiltradas = mostrarMinhasLigas
+    ? leagues.filter((l) => isCriador(l) || isMembro(l))
     : leagues;
+
+  if (!usuario) {
+    return null;
+  }
 
   return (
     <>
@@ -162,35 +245,47 @@ const Leagues = () => {
                         Jogadores: {league.qtd_jogadores}/{league.max_jogadores}
                       </span>
                       <span
-                        className={`creator ${
-                          league.criador_id &&
-                          usuario &&
-                          league.criador_id.toString() === usuario.id.toString()
-                            ? "voce"
-                            : ""
-                        }`}
+                        className={`creator ${isCriador(league) ? "voce" : ""}`}
                       >
                         Criador:{" "}
-                        {league.criador_id &&
-                        usuario &&
-                        league.criador_id.toString() === usuario.id.toString()
-                          ? "Você"
-                          : league.nome_criador}
+                        {isCriador(league) ? "Você" : league.nome_criador}
                       </span>
                     </div>
                   </div>
+                  {}
                   <div className="buttons">
-                    {userLeagues.includes(league.id) ||
-                    (league.criador_id &&
-                      usuario &&
-                      league.criador_id.toString() ===
-                        usuario.id.toString()) ? (
-                      <button
-                        className="view-members-btn"
-                        onClick={() => handleVerMembros(league)}
-                      >
-                        Ver Membros
-                      </button>
+                    {isCriador(league) ? (
+                      <>
+                        <button
+                          className="view-members-btn"
+                          onClick={() => handleVerMembros(league)}
+                        >
+                          Ver Membros
+                        </button>
+                        <button
+                          className="delete-btn"
+                          onClick={() =>
+                            handleExcluirLiga(league.id, league.nome)
+                          }
+                        >
+                          Excluir Liga
+                        </button>
+                      </>
+                    ) : isMembro(league) ? (
+                      <>
+                        <button
+                          className="view-members-btn"
+                          onClick={() => handleVerMembros(league)}
+                        >
+                          Ver Membros
+                        </button>
+                        <button
+                          className="leave-btn"
+                          onClick={() => handleSairLiga(league.id)}
+                        >
+                          Sair da Liga
+                        </button>
+                      </>
                     ) : (
                       <button
                         className="enter-btn"
@@ -210,7 +305,6 @@ const Leagues = () => {
         </div>
       </div>
 
-      {}
       {showForm && (
         <div className="modal">
           <div className="modal-content">

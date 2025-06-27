@@ -11,7 +11,7 @@ body {
   display: flex;
   width: 100vw;
   height: 100vh;
-  background-image: url("../../assets/fundo.png");
+  background-image: url("../../assets/Fundo.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -39,7 +39,7 @@ body {
 .palavra-atual {
   font-size: 40px;
   font-family: "Jersey 15", sans-serif;
-  color: white; /* Cor padrão da palavra */
+  color: white; 
   position: absolute;
   top: 10%;
   left: 3%;
@@ -111,9 +111,7 @@ body {
   font-family: "Jersey 15", sans-serif;
 }
 
-/* --- SEÇÃO DE ANIMAÇÕES ATUALIZADA --- */
 
-/* Animação de erro */
 @keyframes shake {
   0% { transform: translateX(0); }
   20% { transform: translateX(-20px); }
@@ -127,7 +125,6 @@ body {
   animation: shake 0.5s ease-in-out;
 }
 
-/* NOVA ANIMAÇÃO DE ACERTO */
 @keyframes blink-and-fade {
   0% { color: #A020F0; opacity: 1; }
   25% { color: transparent; }
@@ -136,13 +133,13 @@ body {
   100% { color: #A020F0; opacity: 0; }
 }
 
-/* Classe para aplicar a nova animação de acerto */
+
 .correct-word-animation {
   animation: blink-and-fade 0.5s ease-in-out;
 }
 
 
-/* --- TELA DE GAME OVER (SEM ALTERAÇÕES) --- */
+
 #tela-game-over {
   position: fixed;
   top: 0;

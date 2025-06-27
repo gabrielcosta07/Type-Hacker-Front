@@ -1,11 +1,10 @@
-/* liga.css */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 .leagues-container {
   padding: 60px 20px;
   min-height: 100vh;
   width: 100%;
-  box-sizing: border-box; /* Garante que o padding não estoure a largura */
+  box-sizing: border-box;
   background-image: url('../../assets/background_azul.jpg');
   background-repeat: no-repeat;
   background-size: cover;
@@ -18,7 +17,7 @@
   width: 100%;
   max-width: 800px;
   margin: 0 auto;
-  max-height: calc(100vh - 120px); /* Altura da tela menos o padding */
+  max-height: calc(100vh - 120px); 
   display: flex;
   flex-direction: column;
 }
@@ -128,6 +127,7 @@
 .league-name {
   font-size: 1.25rem;
   font-weight: 600;
+  color: #fff; 
 }
 .players, .creator {
   color: rgba(255, 255, 255, 0.8);
@@ -145,9 +145,10 @@
 .buttons {
   display: flex;
   gap: 10px;
+  flex-shrink: 0; 
 }
 
-.enter-btn, .view-members-btn {
+.enter-btn, .view-members-btn, .leave-btn {
   padding: 10px 20px;
   border-radius: 6px;
   font-weight: 500;
@@ -168,6 +169,7 @@
   border-color: #555;
   color: #777;
   cursor: not-allowed;
+  background: transparent;
 }
 .view-members-btn {
   border-color: #00aaff;
@@ -175,6 +177,15 @@
 }
 .view-members-btn:hover {
   background: rgba(0, 170, 255, .15);
+}
+
+.leave-btn {
+  border-color: #ff4d4d;
+  color: #ff4d4d;
+}
+.leave-btn:hover {
+  background: rgba(255, 77, 77, .15);
+  color: #ff6666;
 }
 
 .modal {
@@ -253,6 +264,7 @@
   padding-right: 10px;
   border-top: 1px solid rgba(255, 255, 255, .1);
   border-bottom: 1px solid rgba(255, 255, 255, .1);
+  color: #fff; 
 }
 .member-item {
   padding: 10px 0;
@@ -270,4 +282,32 @@
   .title {
     font-size: 2.5rem;
   }
+}
+
+@media (max-width: 480px) {
+    .buttons {
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+    }
+}
+
+
+
+.delete-btn {
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .3s ease;
+  border: 1px solid #c00; 
+  color: #c00;
+  background: transparent;
+  white-space: nowrap;
+}
+
+.delete-btn:hover {
+  background: #c00; 
+  color: #fff;
+  font-weight: 600;
 }
