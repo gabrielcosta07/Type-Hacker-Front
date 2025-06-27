@@ -1,19 +1,10 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import "./jogo.css";
+// 1. PALAVRAS VÊM DO ARQUIVO JSON
+import PALAVRAS from "./palavras.json";
 
-const PALAVRAS = [
-  "protocolo",
-  "firewall",
-  "algoritmo",
-  "servidor",
-  "backdoor",
-  "malware",
-  "encriptar",
-  "kernel",
-  "rootkit",
-  "exploit",
-];
+// A constante de palavras que estava aqui foi removida.
 
 const ZeroDryGame = () => {
   const navigate = useNavigate();
@@ -26,6 +17,9 @@ const ZeroDryGame = () => {
   const [isShaking, setIsShaking] = useState(false);
   const [posicaoVertical, setPosicaoVertical] = useState(0);
   const [tempoInicio, setTempoInicio] = useState(null);
+  
+  // 2. NOVO ESTADO PARA AUMENTAR VELOCIDADE COM ACERTOS
+  const [acertosTotais, setAcertosTotais] = useState(0);
 
   const inputRef = useRef(null);
   const gameContainerRef = useRef(null);
@@ -34,6 +28,7 @@ const ZeroDryGame = () => {
   const salvarPontuacao = useCallback(async (dadosPartida) => {
     try {
       const response = await fetch(
+        // URL do seu backend
         "http://localhost/Trabalho-Web1-Jogo-Back/ranking/pontuar.php",
         {
           method: "POST",
@@ -82,6 +77,7 @@ const ZeroDryGame = () => {
     setIsShaking(false);
     setInputValue("");
     setPosicaoVertical(0);
+    // Palavras vêm do JSON importado
     setPalavraAtual(PALAVRAS[Math.floor(Math.random() * PALAVRAS.length)]);
     inputRef.current?.focus();
   }, []);
@@ -90,6 +86,8 @@ const ZeroDryGame = () => {
     setPontuacao(0);
     setErros(0);
     setSequenciaAcertos(0);
+    // Zera o contador de acertos
+    setAcertosTotais(0);
     setIsGameOver(false);
     setTempoInicio(Date.now());
     gameOverTriggered.current = false;
@@ -114,24 +112,37 @@ const ZeroDryGame = () => {
     reiniciarJogo();
   }, [reiniciarJogo]);
 
+  // 3. LÓGICA DE QUEDA E VELOCIDADE TOTALMENTE ATUALIZADA
   useEffect(() => {
     if (!palavraAtual || isGameOver) return;
-    const velocidade = 1 + erros;
-    const gameHeight =
-      gameContainerRef.current?.offsetHeight || window.innerHeight;
+
+    const inputElement = inputRef.current;
+    if (!inputElement) return;
+
+    // Condição de perda baseada na posição do input
+    const limiteDeQueda = inputElement.getBoundingClientRect().top;
+    
+    // Fórmula de velocidade que considera erros e acertos
+    const velocidade = 1 + erros + (acertosTotais * 0.2);
+
     const intervaloQueda = setInterval(() => {
       setPosicaoVertical((pos) => {
         const novaPosicao = pos + velocidade;
-        if (novaPosicao > gameHeight - 50) {
+        
+        // Verifica se a palavra atingiu o limite
+        if (novaPosicao >= limiteDeQueda - 20) {
           clearInterval(intervaloQueda);
           tratarErro();
+          // 4. CORREÇÃO DE BUG: Inicia nova palavra para não travar o jogo
+          iniciarNovaPalavra();
           return pos;
         }
         return novaPosicao;
       });
     }, 50);
+
     return () => clearInterval(intervaloQueda);
-  }, [palavraAtual, isGameOver, erros, tratarErro]);
+  }, [palavraAtual, isGameOver, erros, acertosTotais, tratarErro, iniciarNovaPalavra]);
 
   const handleInputChange = (event) => {
     if (!isGameOver) setInputValue(event.target.value);
@@ -141,6 +152,9 @@ const ZeroDryGame = () => {
     if (event.key !== "Enter" || !palavraAtual || isGameOver) return;
     event.preventDefault();
     if (inputValue.toLowerCase() === palavraAtual.toLowerCase()) {
+      // Incrementa o contador de acertos totais
+      setAcertosTotais((prev) => prev + 1);
+
       const pontosGanhos = 10 + sequenciaAcertos;
       setPontuacao((prev) => prev + pontosGanhos);
       setSequenciaAcertos((prev) => prev + 1);
@@ -179,7 +193,7 @@ const ZeroDryGame = () => {
           <div className="container-input">
             <input
               ref={inputRef}
-              className="game-input"
+              className="game-input" // Mantive o "game-input" do seu último código
               placeholder="Quebre o código!"
               value={inputValue}
               onChange={handleInputChange}
