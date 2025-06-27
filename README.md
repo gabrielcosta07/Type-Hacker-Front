@@ -1,10 +1,5 @@
 # 🕹️ Type Hacker – Jogo de Digitação Estilo Hacker
 
-![Gameplay do Type Hacker](https://i.imgur.com/uRHRa9x.gif)
-_(Dica: Grave um GIF da sua tela de jogo e substitua o link acima para mostrar seu projeto em ação!)_
-
----
-
 ### 📖 Sobre o Projeto
 
 **Type Hacker** é um jogo de digitação dinâmico e desafiador com uma temática hacker. O objetivo é testar e aprimorar a velocidade e precisão de digitação do jogador. Palavras "caem" pela tela e o jogador deve digitá-las corretamente antes que atinjam o final.
