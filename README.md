@@ -1,9 +1,9 @@
-# 🕹️ Type Hacker – Jogo de Digitação Estilo Hacker (Front-end)
+# 🕹️ Type Hacker – Jogo de Digitação Estilo Hacker (Back-end)
 
 ## 🎯 Visão Geral
-**Type Hacker** é um jogo de digitação com estética inspirada em simulações de hackers. O jogador deve digitar corretamente palavras que surgem na tela, antes que elas alcancem o final. A experiência simula uma corrida contra o tempo, exigindo atenção e agilidade na digitação.
+Este repositório contém o código do **Back-end** do jogo Type Hacker. Ele é o responsável por cuidar da parte "invisível" do sistema: autenticar os usuários, salvar os dados das partidas, calcular pontuações, gerenciar ligas e retornar tudo isso pro Front-end de forma organizada, via API REST.
 
-Este repositório contém o **Front-end** do projeto Type Hacker, desenvolvido com React e Vite. O **Back-end**, responsável por autenticação, pontuação e armazenamento de partidas, está disponível em um repositório separado.
+Toda a lógica é feita em PHP, usando um banco de dados MySQL. A comunicação com o Front é feita via JSON.
 
 ---
 
@@ -19,52 +19,57 @@ Este projeto foi desenvolvido por:
 
 ## 🏗️ Estrutura do Projeto
 
-### 🖥️ Front-end (Este Repositório)
-- **Responsabilidades:** Interface do jogo, lógica de digitação, contagem de tempo, verificação de erros, comunicação com a API.
-- **Tecnologias:** React, Vite, CSS.
+O sistema foi dividido em dois repositórios para facilitar o desenvolvimento:
 
 ### ⚙️ Back-end (Repositório Separado)
-- **Responsabilidades:** Autenticação, controle de sessões, armazenamento de partidas e pontuação.
-- **Tecnologias:** PHP, MySQL.
+- **Responsável por:** autenticação, sessões, cadastro/login, envio de partidas, ranking e ligas.
+- **Tecnologias:** PHP, MySQL, Apache (via XAMPP).
+- [👉 Repositório do Back-end](https://github.com/gabrielcosta07/Trabalho-Web1-Jogo-Back)
 
----
-
-## 🎮 Mecânica do Jogo
-
-- ⏱️ **Contador de tempo:** Mostra quantos segundos a partida durou.
-- 🧠 **Erros de digitação:** Ao cometer **3 erros**, a partida é encerrada.
-- ❌ **Palavra chegou ao fim da tela:** O jogo termina automaticamente.
-- ✅ **Objetivo:** Digitar corretamente o máximo possível de palavras antes de cometer 3 erros ou deixar uma palavra atingir o final da tela.
-
----
-
-## 🔐 Autenticação
-
-- **Login com email e senha**: Interface no Front-end, lógica de verificação no Back-end.
-- **Sessão persistente**: O usuário permanece logado durante a sessão ativa, via gerenciamento de sessão do Back-end.
-- **Cadastro de novos usuários**: Interface para registro com validações básicas no Front-end.
+### 🖥️ Front-end (Este Repositório)
+- **Responsável por:** parte visual, lógica do jogo (verificação de palavras, tempo de jogo, fim de partida).
+- **Tecnologias:** React, Vite, CSS.
 
 ---
 
 ## 🛠️ Tecnologias Utilizadas
 
-| Camada         | Tecnologia             | Função                                           |
-|----------------|------------------------|--------------------------------------------------|
-| **Front-end**  | React, Vite, CSS       | Interface do usuário e lógica do jogo            |
-| **Back-end**   | PHP                    | API REST para autenticação e pontuação           |
-| **Banco de Dados** | MySQL              | Armazenamento de usuários e partidas             |
+| Camada         | Tecnologia        | Função                                                    |
+|----------------|-------------------|-----------------------------------------------------------|
+| Linguagem      | PHP               | Criar a API, validar dados, aplicar regras do sistema     |
+| Banco de Dados | MySQL             | Armazenar usuários, partidas, pontuações, ligas           |
+| Servidor       | Apache (XAMPP)    | Executar os scripts PHP e servir as requisições HTTP      |
+| Comunicação    | JSON              | Trocar informações com o Front-end                        |
 
 ---
 
-## 📊 Funcionalidades
+## 📊 Funcionalidades da API
 
-- 🔐 Autenticação de usuários (login e registro)
-- ⏱️ Contador de tempo da partida
-- ❌ Fim de jogo após 3 erros de digitação
-- 📉 Fim de jogo se a palavra chegar ao final da tela
-- 🧾 Registro e histórico de partidas
-- 🏆 Sistema de ranking global e por ligas
-- 👥 Criação e entrada em ligas com código de acesso
+O Back-end expõe os seguintes endpoints:
 
-> ℹ️ Algumas funcionalidades estão ligadas ao Back-end via API e dependem de sua disponibilidade/configuração.
+### 🔐 Autenticação de Usuário
+- Registro com validação básica e senha criptografada
+- Login com verificação de credenciais
+- Sessão iniciada ao logar (gerenciada com `$_SESSION` no PHP)
+- Logout simples via sessão
+
+### 🎮 Partidas e Pontuação
+- Salvamento de partidas com duração em segundos
+- Cada partida salva contém o tempo que o jogador resistiu digitando corretamente
+- Validação de erros e encerramento da partida são feitos no Front, só o resultado final é enviado
+
+### 🏆 Sistema de Ranking
+- Ranking geral de todos os jogadores
+- Ranking por ligas (jogadores dentro de uma liga específica)
+
+### 👥 Ligas
+- Criação de ligas com nome e código único
+- Entrada em ligas usando código
+- Listagem de membros de uma liga
+
+### 📈 Histórico de Partidas
+- Exibe as partidas passadas de um jogador
+- Pode ser usado para mostrar progresso e performance ao longo do tempo
+
+---
 
