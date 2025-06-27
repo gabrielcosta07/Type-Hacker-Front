@@ -8,6 +8,15 @@
   color: #e0e0e0;
 }
 
+body {
+  background-image: url('../../assets/background_azul.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh;
+  margin: 0;
+}
+
 .historico-title {
   text-align: center;
   color: #00aaff;
