@@ -1,10 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import "./jogo.css";
-// 1. PALAVRAS VÊM DO ARQUIVO JSON
 import PALAVRAS from "./palavras.json";
-
-// A constante de palavras que estava aqui foi removida.
 
 const ZeroDryGame = () => {
   const navigate = useNavigate();
@@ -14,12 +11,15 @@ const ZeroDryGame = () => {
   const [palavraAtual, setPalavraAtual] = useState("");
   const [inputValue, setInputValue] = useState("");
   const [isGameOver, setIsGameOver] = useState(false);
-  const [isShaking, setIsShaking] = useState(false);
+  const [isShaking, setIsShaking] = useState(false); // Mantido para a animação de erro
+  
+  // NOVO ESTADO: Para controlar a nova animação de acerto
+  const [isCorrect, setIsCorrect] = useState(false);
+  
   const [posicaoVertical, setPosicaoVertical] = useState(0);
   const [tempoInicio, setTempoInicio] = useState(null);
-  
-  // 2. NOVO ESTADO PARA AUMENTAR VELOCIDADE COM ACERTOS
   const [acertosTotais, setAcertosTotais] = useState(0);
+  const [tempoDecorrido, setTempoDecorrido] = useState(0);
 
   const inputRef = useRef(null);
   const gameContainerRef = useRef(null);
@@ -28,20 +28,15 @@ const ZeroDryGame = () => {
   const salvarPontuacao = useCallback(async (dadosPartida) => {
     try {
       const response = await fetch(
-        // URL do seu backend
         "http://localhost/Trabalho-Web1-Jogo-Back/ranking/pontuar.php",
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(dadosPartida),
           credentials: "include",
         }
       );
-
       const result = await response.json();
-
       if (response.ok && result.success) {
         console.log("Pontuação guardada com sucesso!");
       } else {
@@ -53,31 +48,21 @@ const ZeroDryGame = () => {
   }, []);
 
   const fimDeJogo = useCallback(() => {
-    if (gameOverTriggered.current) {
-      return;
-    }
+    if (gameOverTriggered.current) return;
     gameOverTriggered.current = true;
     setIsGameOver(true);
 
     const tempoFim = Date.now();
-    const tempoJogado = tempoInicio
-      ? Math.round((tempoFim - tempoInicio) / 1000)
-      : 0;
-
-    const dadosPartida = {
-      pontos: pontuacao,
-      erros: erros,
-      tempo_jogado: tempoJogado,
-    };
-
+    const tempoJogado = tempoInicio ? Math.round((tempoFim - tempoInicio) / 1000) : 0;
+    const dadosPartida = { pontos: pontuacao, erros, tempo_jogado: tempoJogado };
     salvarPontuacao(dadosPartida);
   }, [pontuacao, erros, tempoInicio, salvarPontuacao]);
 
   const iniciarNovaPalavra = useCallback(() => {
     setIsShaking(false);
+    setIsCorrect(false); // Garante que a animação de acerto pare
     setInputValue("");
     setPosicaoVertical(0);
-    // Palavras vêm do JSON importado
     setPalavraAtual(PALAVRAS[Math.floor(Math.random() * PALAVRAS.length)]);
     inputRef.current?.focus();
   }, []);
@@ -86,8 +71,8 @@ const ZeroDryGame = () => {
     setPontuacao(0);
     setErros(0);
     setSequenciaAcertos(0);
-    // Zera o contador de acertos
     setAcertosTotais(0);
+    setTempoDecorrido(0);
     setIsGameOver(false);
     setTempoInicio(Date.now());
     gameOverTriggered.current = false;
@@ -104,45 +89,44 @@ const ZeroDryGame = () => {
       return novosErros;
     });
     setInputValue("");
-    setIsShaking(true);
+    setIsShaking(true); // Ativa a animação de erro (shake)
     setTimeout(() => setIsShaking(false), 500);
   }, [fimDeJogo]);
 
   useEffect(() => {
     reiniciarJogo();
   }, [reiniciarJogo]);
+  
+  useEffect(() => {
+    let intervalo;
+    if (!isGameOver) {
+      intervalo = setInterval(() => {
+        setTempoDecorrido((prevTempo) => prevTempo + 1);
+      }, 1000);
+    }
+    return () => clearInterval(intervalo);
+  }, [isGameOver]);
 
-  // 3. LÓGICA DE QUEDA E VELOCIDADE TOTALMENTE ATUALIZADA
   useEffect(() => {
     if (!palavraAtual || isGameOver) return;
-
     const inputElement = inputRef.current;
     if (!inputElement) return;
-
-    // Condição de perda baseada na posição do input
     const limiteDeQueda = inputElement.getBoundingClientRect().top;
-    
-    // Fórmula de velocidade que considera erros e acertos
     const velocidade = 1 + erros + (acertosTotais * 0.2);
 
     const intervaloQueda = setInterval(() => {
       setPosicaoVertical((pos) => {
         const novaPosicao = pos + velocidade;
-        
-        // Verifica se a palavra atingiu o limite
         if (novaPosicao >= limiteDeQueda - 20) {
           clearInterval(intervaloQueda);
-          tratarErro();
-          // 4. CORREÇÃO DE BUG: Inicia nova palavra para não travar o jogo
-          iniciarNovaPalavra();
+          fimDeJogo();
           return pos;
         }
         return novaPosicao;
       });
     }, 50);
-
     return () => clearInterval(intervaloQueda);
-  }, [palavraAtual, isGameOver, erros, acertosTotais, tratarErro, iniciarNovaPalavra]);
+  }, [palavraAtual, isGameOver, erros, acertosTotais, fimDeJogo]);
 
   const handleInputChange = (event) => {
     if (!isGameOver) setInputValue(event.target.value);
@@ -152,13 +136,15 @@ const ZeroDryGame = () => {
     if (event.key !== "Enter" || !palavraAtual || isGameOver) return;
     event.preventDefault();
     if (inputValue.toLowerCase() === palavraAtual.toLowerCase()) {
-      // Incrementa o contador de acertos totais
+      // MUDANÇA: Ativa a nova animação de acerto
+      setIsCorrect(true);
+      
       setAcertosTotais((prev) => prev + 1);
-
       const pontosGanhos = 10 + sequenciaAcertos;
       setPontuacao((prev) => prev + pontosGanhos);
       setSequenciaAcertos((prev) => prev + 1);
-      setIsShaking(true);
+      
+      // A nova palavra só é iniciada após a animação terminar
       setTimeout(() => iniciarNovaPalavra(), 500);
     } else {
       tratarErro();
@@ -166,6 +152,20 @@ const ZeroDryGame = () => {
   };
 
   const goToHome = () => navigate("/");
+  
+  const formatarTempo = (segundos) => {
+    const min = Math.floor(segundos / 60);
+    const seg = segundos % 60;
+    return `${String(min).padStart(2, "0")}:${String(seg).padStart(2, "0")}`;
+  };
+  
+  // MUDANÇA: Lógica para decidir qual classe de animação usar
+  let animationClass = "";
+  if (isCorrect) {
+    animationClass = "correct-word-animation"; // Nova animação de acerto
+  } else if (isShaking) {
+    animationClass = "shake-animation"; // Animação de erro
+  }
 
   return (
     <>
@@ -174,16 +174,10 @@ const ZeroDryGame = () => {
           <div className="sub-container">
             {palavraAtual && (
               <div
-                className={`palavra-atual ${
-                  isShaking ? "shake-animation" : ""
-                }`}
+                className={`palavra-atual ${animationClass}`} // Classe de animação dinâmica
                 style={{
                   top: `${posicaoVertical}px`,
-                  color:
-                    isShaking &&
-                    inputValue.toLowerCase() === palavraAtual.toLowerCase()
-                      ? "lightgreen"
-                      : "white",
+                  // A cor agora é controlada pelo CSS
                 }}
               >
                 {palavraAtual}
@@ -193,7 +187,7 @@ const ZeroDryGame = () => {
           <div className="container-input">
             <input
               ref={inputRef}
-              className="game-input" // Mantive o "game-input" do seu último código
+              className="input"
               placeholder="Quebre o código!"
               value={inputValue}
               onChange={handleInputChange}
@@ -203,11 +197,16 @@ const ZeroDryGame = () => {
             />
           </div>
         </div>
+        
         <div className="Direita">
           <div className="container-pontuacao">
             PONTUAÇÃO: <span id="pontos">{pontuacao}</span>
           </div>
+          <div className="container-temporizador">
+            TEMPO: <span>{formatarTempo(tempoDecorrido)}</span>
+          </div>
         </div>
+
       </div>
 
       {isGameOver && (
