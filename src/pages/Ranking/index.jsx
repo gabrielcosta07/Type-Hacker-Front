@@ -1,25 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // useNavigate já estava importado
+import { useNavigate } from "react-router-dom";
 import { FaTrophy } from "react-icons/fa";
 import "./ranking.css";
 
 const Ranking = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("geral");
-  const [rankings, setRankings] = useState({
-    geral: [],
-    semanal: [],
-    liga: [],
-  });
+  const [rankings, setRankings] = useState({ geral: [], semanal: [] });
+  const [userLeagues, setUserLeagues] = useState([]);
+  const [selectedLiga, setSelectedLiga] = useState(null);
+  const [isLigaLoading, setIsLigaLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Hook para navegação
-  const navigate = useNavigate();
-
   useEffect(() => {
     setIsLoading(true);
-    setError(null);
-
     fetch(
       "http://localhost/Trabalho-Web1-Jogo-Back/ranking/listar_rankings.php",
       {
@@ -27,49 +22,136 @@ const Ranking = () => {
         credentials: "include",
       }
     )
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Falha ao buscar os dados do servidor.");
-        }
-        return response.json();
-      })
+      .then((res) => res.json())
       .then((data) => {
-        setRankings(data);
+        setRankings({ geral: data.geral, semanal: data.semanal });
+        setUserLeagues(data.liga);
       })
-      .catch((err) => {
-        console.error("Erro ao carregar o ranking:", err);
-        setError(
-          "Não foi possível carregar os rankings. Tente novamente mais tarde."
-        );
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+      .catch((err) => setError("Não foi possível carregar os rankings."))
+      .finally(() => setIsLoading(false));
   }, []);
 
-  const getRankClass = (index) => {
-    if (index === 0) return "rank-1";
-    if (index === 1) return "rank-2";
-    if (index === 2) return "rank-3";
-    return "";
+  const handleSelectLiga = (ligaId) => {
+    setIsLigaLoading(true);
+    setError(null);
+    fetch(
+      `http://localhost/Trabalho-Web1-Jogo-Back/ranking/listar_detalhes_liga.php?id=${ligaId}`,
+      {
+        method: "GET",
+        credentials: "include",
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setSelectedLiga(data.data);
+        } else {
+          throw new Error(data.message);
+        }
+      })
+      .catch((err) =>
+        setError("Não foi possível carregar os detalhes da liga.")
+      )
+      .finally(() => setIsLigaLoading(false));
   };
 
-  // Função para navegar para a Home
-  const goToHome = () => {
-    navigate("/");
-  };
+  const renderContent = () => {
+    if (isLoading) return <p>Carregando rankings...</p>;
+    if (error) return <p className="error-message">{error}</p>;
 
-  const currentRankingData = rankings[activeTab] || [];
+    if (activeTab === "geral" || activeTab === "semanal") {
+      const data = rankings[activeTab] || [];
+      return (
+        <ol>
+          {data.length > 0 ? (
+            data.map((player, index) => (
+              <li key={player.id} className={`ranking-item rank-${index + 1}`}>
+                <span className="ranking-position">
+                  {index + 1}
+                  {index < 3 && <FaTrophy className="ranking-trophy-icon" />}
+                </span>
+                <span className="ranking-name">{player.nome}</span>
+                <span className="ranking-score">
+                  {player.pontuacao.toLocaleString("pt-BR")} PTS
+                </span>
+              </li>
+            ))
+          ) : (
+            <p>Nenhum dado disponível.</p>
+          )}
+        </ol>
+      );
+    }
+
+    if (activeTab === "liga") {
+      if (isLigaLoading) return <p>Carregando detalhes da liga...</p>;
+
+      if (selectedLiga) {
+        return (
+          <>
+            <button
+              onClick={() => setSelectedLiga(null)}
+              className="back-leagues-button"
+            >
+              &larr; Voltar à lista de ligas
+            </button>
+            <h2 className="liga-subtitle">{selectedLiga.nome_liga}</h2>
+            <table className="liga-table">
+              <thead>
+                <tr>
+                  <th>Pos.</th>
+                  <th>Jogador</th>
+                  <th>Pontuação Semanal</th>
+                  <th>Pontuação Geral</th>
+                </tr>
+              </thead>
+              <tbody>
+                {selectedLiga.membros.map((m, i) => (
+                  <tr key={m.id} className={`rank-${i + 1}`}>
+                    <td>
+                      {i + 1}
+                      {i < 3 && <FaTrophy className="ranking-trophy-icon" />}
+                    </td>
+                    <td>{m.nome}</td>
+                    <td>{m.pontuacao_semanal.toLocaleString("pt-BR")}</td>
+                    <td>{m.pontuacao_geral.toLocaleString("pt-BR")}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
+        );
+      }
+
+      return (
+        <>
+          <h2 className="liga-subtitle">Selecione uma Liga</h2>
+          <div className="leagues-list">
+            {userLeagues.length > 0 ? (
+              userLeagues.map((liga) => (
+                <button
+                  key={liga.id}
+                  onClick={() => handleSelectLiga(liga.id)}
+                  className="league-button"
+                >
+                  {liga.nome}
+                </button>
+              ))
+            ) : (
+              <p>Você não está em nenhuma liga.</p>
+            )}
+          </div>
+        </>
+      );
+    }
+  };
 
   return (
     <div className="ranking-container">
-      {/* --- BOTÃO ADICIONADO AQUI --- */}
-      <button onClick={goToHome} className="back-home-button">
+      <button onClick={() => navigate("/")} className="back-home-button">
         &larr; Voltar para Home
       </button>
-
       <h1 className="ranking-title">Ranking</h1>
-
       <div className="ranking-tabs">
         <button
           className={activeTab === "geral" ? "active" : ""}
@@ -85,39 +167,15 @@ const Ranking = () => {
         </button>
         <button
           className={activeTab === "liga" ? "active" : ""}
-          onClick={() => setActiveTab("liga")}
+          onClick={() => {
+            setSelectedLiga(null);
+            setActiveTab("liga");
+          }}
         >
-          Sua Liga
+          Suas Ligas
         </button>
       </div>
-
-      <div className="ranking-list">
-        {isLoading && <p>Carregando ranking...</p>}
-        {error && <p className="error-message">{error}</p>}
-        {!isLoading && !error && (
-          <ol>
-            {currentRankingData.length > 0 ? (
-              currentRankingData.map((player, index) => (
-                <li
-                  key={player.id}
-                  className={`ranking-item ${getRankClass(index)}`}
-                >
-                  <span className="ranking-position">
-                    {index + 1}
-                    {index < 3 && <FaTrophy className="ranking-trophy-icon" />}
-                  </span>
-                  <span className="ranking-name">{player.nome}</span>
-                  <span className="ranking-score">
-                    {player.pontuacao.toLocaleString("pt-BR")} PTS
-                  </span>
-                </li>
-              ))
-            ) : (
-              <p>Nenhum dado disponível para este ranking.</p>
-            )}
-          </ol>
-        )}
-      </div>
+      <div className="ranking-list">{renderContent()}</div>
     </div>
   );
 };
