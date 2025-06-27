@@ -25,8 +25,58 @@ const ZeroDryGame = () => {
   const [isGameOver, setIsGameOver] = useState(false);
   const [isShaking, setIsShaking] = useState(false);
   const [posicaoVertical, setPosicaoVertical] = useState(0);
+  const [tempoInicio, setTempoInicio] = useState(null);
+
   const inputRef = useRef(null);
   const gameContainerRef = useRef(null);
+  const gameOverTriggered = useRef(false);
+
+  const salvarPontuacao = useCallback(async (dadosPartida) => {
+    try {
+      const response = await fetch(
+        "http://localhost/Trabalho-Web1-Jogo-Back/ranking/pontuar.php",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(dadosPartida),
+          credentials: "include",
+        }
+      );
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        console.log("Pontuação guardada com sucesso!");
+      } else {
+        console.error("Falha ao guardar pontuação:", result.message);
+      }
+    } catch (error) {
+      console.error("Erro de rede ao guardar pontuação:", error);
+    }
+  }, []);
+
+  const fimDeJogo = useCallback(() => {
+    if (gameOverTriggered.current) {
+      return;
+    }
+    gameOverTriggered.current = true;
+    setIsGameOver(true);
+
+    const tempoFim = Date.now();
+    const tempoJogado = tempoInicio
+      ? Math.round((tempoFim - tempoInicio) / 1000)
+      : 0;
+
+    const dadosPartida = {
+      pontos: pontuacao,
+      erros: erros,
+      tempo_jogado: tempoJogado,
+    };
+
+    salvarPontuacao(dadosPartida);
+  }, [pontuacao, erros, tempoInicio, salvarPontuacao]);
 
   const iniciarNovaPalavra = useCallback(() => {
     setIsShaking(false);
@@ -41,10 +91,10 @@ const ZeroDryGame = () => {
     setErros(0);
     setSequenciaAcertos(0);
     setIsGameOver(false);
+    setTempoInicio(Date.now());
+    gameOverTriggered.current = false;
     iniciarNovaPalavra();
   }, [iniciarNovaPalavra]);
-
-  const fimDeJogo = useCallback(() => setIsGameOver(true), []);
 
   const tratarErro = useCallback(() => {
     setSequenciaAcertos(0);
@@ -129,7 +179,7 @@ const ZeroDryGame = () => {
           <div className="container-input">
             <input
               ref={inputRef}
-              className="game-input" /* ALTERADO */
+              className="game-input"
               placeholder="Quebre o código!"
               value={inputValue}
               onChange={handleInputChange}
@@ -149,6 +199,7 @@ const ZeroDryGame = () => {
       {isGameOver && (
         <div id="tela-game-over">
           <h1>GAME OVER</h1>
+          <p>Sua pontuação final: {pontuacao}</p>
           <button id="botao-jogar-novamente" onClick={reiniciarJogo}>
             Jogar Novamente
           </button>
