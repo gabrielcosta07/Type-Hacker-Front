@@ -1,73 +1,70 @@
 # 🕹️ Type Hacker – Jogo de Digitação Estilo Hacker (Front-end)
 
 ## 🎯 Visão Geral
-**Type Hacker** é um jogo de digitação inspirado em simulações de hackers. O jogador simula a invasão de sistemas através da digitação de linhas de código sob pressão. O objetivo é "quebrar firewalls" digitando corretamente os comandos exibidos na tela. Cada erro reduz o tempo restante, e a dificuldade aumenta conforme o progresso nas fases.
+**Type Hacker** é um jogo de digitação com estética inspirada em simulações de hackers. O jogador deve digitar corretamente palavras que surgem na tela, antes que elas alcancem o final. A experiência simula uma corrida contra o tempo, exigindo atenção e agilidade na digitação.
 
-Este repositório/diretório contém o código do **Front-end** do projeto Type Hacker, desenvolvido com React e Vite. O Back-end, responsável pela API REST e interação com o banco de dados, está localizado em um diretório/repositório separado.
+Este repositório contém o **Front-end** do projeto Type Hacker, desenvolvido com React e Vite. O **Back-end**, responsável por autenticação, pontuação e armazenamento de partidas, está disponível em um repositório separado.
 
 ---
 
 ## 👥 Equipe do Projeto
 Este projeto foi desenvolvido por:
 
-- Danniel Eduardo Dorox - *(https://github.com/D0ROX)*
-- Gabriel Silva Costa - *(https://github.com/gabrielcosta07)*
-- Reinaldo Castellano - *(https://github.com/CastellPg)*
-- Murilo Santos - *(https://github.com/murilossx)*
+- [Danniel Eduardo Dorox](https://github.com/D0ROX)
+- [Gabriel Silva Costa](https://github.com/gabrielcosta07)
+- [Reinaldo Castellano](https://github.com/CastellPg)
+- [Murilo Santos](https://github.com/murilossx)
+
 ---
 
 ## 🏗️ Estrutura do Projeto
-O projeto Type Hacker é conscientemente dividido em duas partes principais para melhor organização e desenvolvimento:
 
-### 🖥️ Front-end (Este Repositório/Diretório)
-- **Responsabilidades:** Interface do usuário (UI), experiência do usuário (UX), lógica do jogo (verificação de digitação, tempo, fases), e comunicação com a API do Back-end.
-- **Tecnologias Principais:** React, Vite, CSS.
+### 🖥️ Front-end (Este Repositório)
+- **Responsabilidades:** Interface do jogo, lógica de digitação, contagem de tempo, verificação de erros, comunicação com a API.
+- **Tecnologias:** React, Vite, CSS.
 
-### ⚙️ Back-end (Diretório/Repositório Separado)
-- **Responsabilidades:** Fornecer uma API REST para autenticação de usuários, gerenciamento de pontuações, armazenamento e recuperação de dados de usuários e partidas.
-- **Tecnologias Principais:** PHP, MySQL.
-
----
-
-## 🎮 Gameplay
-
-### 🧩 Estrutura de Fases
-
-| Nível | Ambiente Alvo      | Descrição                                     | Penalidade por Erro |
-|-------|--------------------|-----------------------------------------------|----------------------|
-| 1     | Sistema de Empresa | Quebrar segurança básica de rede corporativa  | -⏱️ 1s               |
-| 2     | Banco              | Superar firewalls com múltiplas autenticações | -⏱️ 2s               |
-| 3     | Governo            | Invadir sistemas governamentais altamente seguros | -⏱️ 3s            |
-
-- ⏱ **Tempo limite por fase:** Contador regressivo ao iniciar a fase.
-- ⌨️ **Erros de digitação:** Reduzem o tempo restante.
-- ✅ **Objetivo:** Completar a digitação de todos os comandos antes do tempo acabar.
+### ⚙️ Back-end (Repositório Separado)
+- **Responsabilidades:** Autenticação, controle de sessões, armazenamento de partidas e pontuação.
+- **Tecnologias:** PHP, MySQL.
 
 ---
 
-## 🔐 Autenticação (Lógica no Back-end, Interface no Front-end)
-- Página de **login** protegida com autenticação por email e senha.
-- Sessão persistente via cookies ou `localStorage` (gerenciada pelo front-end após autenticação bem-sucedida com o back-end).
-- Cadastro de novos usuários com verificação simples (validações no front-end e processamento/armazenamento no back-end).
+## 🎮 Mecânica do Jogo
+
+- ⏱️ **Contador de tempo:** Mostra quantos segundos a partida durou.
+- 🧠 **Erros de digitação:** Ao cometer **3 erros**, a partida é encerrada.
+- ❌ **Palavra chegou ao fim da tela:** O jogo termina automaticamente.
+- ✅ **Objetivo:** Digitar corretamente o máximo possível de palavras antes de cometer 3 erros ou deixar uma palavra atingir o final da tela.
+
+---
+
+## 🔐 Autenticação
+
+- **Login com email e senha**: Interface no Front-end, lógica de verificação no Back-end.
+- **Sessão persistente**: O usuário permanece logado durante a sessão ativa, via gerenciamento de sessão do Back-end.
+- **Cadastro de novos usuários**: Interface para registro com validações básicas no Front-end.
 
 ---
 
 ## 🛠️ Tecnologias Utilizadas
 
 | Camada         | Tecnologia             | Função                                           |
-|----------------|--------------------------|--------------------------------------------------|
-| **Front-end** | **React, Vite, CSS** | **Interface do usuário e lógica do jogo (este repo)** |
-| Back-end       | PHP                      | API REST para autenticação e pontuação           |
-| Banco de Dados | MySQL                    | Armazenamento de usuários e partidas             |
+|----------------|------------------------|--------------------------------------------------|
+| **Front-end**  | React, Vite, CSS       | Interface do usuário e lógica do jogo            |
+| **Back-end**   | PHP                    | API REST para autenticação e pontuação           |
+| **Banco de Dados** | MySQL              | Armazenamento de usuários e partidas             |
 
 ---
+
 ## 📊 Funcionalidades
 
 - 🔐 Autenticação de usuários (login e registro)
-- 🎯 Sistema de níveis com dificuldade progressiva
-- 🧠 Verificação de erros de digitação com penalidade de tempo
-- 🏆 Ranking de jogadores (global e por ligas)
-- 🧑‍🤝‍🧑 Sistema de criação/entrada em ligas com código
-- 📈 Histórico de partidas por jogador
+- ⏱️ Contador de tempo da partida
+- ❌ Fim de jogo após 3 erros de digitação
+- 📉 Fim de jogo se a palavra chegar ao final da tela
+- 🧾 Registro e histórico de partidas
+- 🏆 Sistema de ranking global e por ligas
+- 👥 Criação e entrada em ligas com código de acesso
 
-*(Nota: Muitas dessas funcionalidades dependem da interação com a API fornecida pelo Back-end.)*
+> ℹ️ Algumas funcionalidades estão ligadas ao Back-end via API e dependem de sua disponibilidade/configuração.
+
